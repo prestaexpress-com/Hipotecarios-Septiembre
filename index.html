@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -399,6 +400,190 @@
             
             .header h1 {
                 font-size: 2rem;
+            }
+            
+            .nav-list {
+                gap: 20px;
+            }
+            
+            .sedes-list {
+                gap: 15px;
+            }
+        }
+
+        /* Responsive para tablets */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .nav-container, .sedes-container {
+                padding: 0 15px;
+            }
+            
+            .nav-list {
+                gap: 15px;
+                flex-wrap: wrap;
+            }
+            
+            .nav-link {
+                font-size: 1rem;
+                padding: 8px 15px;
+            }
+            
+            .sedes-list {
+                gap: 10px;
+                justify-content: flex-start;
+            }
+            
+            .sede-item {
+                padding: 6px 12px;
+                font-size: 0.9rem;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .header p {
+                font-size: 0.9rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            
+            .dashboard-container {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .asesores-panel {
+                order: 2;
+            }
+            
+            .main-content {
+                order: 1;
+            }
+        }
+
+        /* Responsive para móviles */
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+            
+            .nav-container, .sedes-container {
+                padding: 0 10px;
+            }
+            
+            .nav-list {
+                flex-direction: column;
+                gap: 5px;
+                align-items: center;
+            }
+            
+            .nav-link {
+                width: 200px;
+                text-align: center;
+                font-size: 0.95rem;
+                padding: 10px 15px;
+            }
+            
+            .sedes-list {
+                flex-direction: column;
+                gap: 8px;
+                align-items: center;
+            }
+            
+            .sede-item {
+                width: 200px;
+                text-align: center;
+                padding: 8px 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+                text-align: center;
+            }
+            
+            .header p {
+                font-size: 0.85rem;
+                text-align: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .stat-card {
+                padding: 15px;
+            }
+            
+            .stat-number {
+                font-size: 1.8rem;
+            }
+            
+            .stat-label {
+                font-size: 0.85rem;
+            }
+            
+            .asesores-panel {
+                padding: 15px;
+            }
+            
+            .asesor-item {
+                padding: 12px;
+                margin-bottom: 8px;
+            }
+            
+            .asesor-nombre {
+                font-size: 0.95rem;
+            }
+            
+            .asesor-stats span {
+                font-size: 0.8rem;
+            }
+            
+            .charts-container {
+                padding: 15px;
+            }
+            
+            .chart-title {
+                font-size: 1.1rem;
+            }
+            
+            /* Mejorar tabla de clientes en móvil */
+            .clientes-table {
+                font-size: 0.8rem;
+                overflow-x: auto;
+                display: block;
+                white-space: nowrap;
+            }
+            
+            .clientes-table th,
+            .clientes-table td {
+                padding: 8px 4px;
+                min-width: 80px;
+            }
+            
+            /* Hacer scroll horizontal en tablas pequeñas */
+            .table-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            /* Hacer que el gráfico sea más pequeño en móvil */
+            .chart-container {
+                height: 250px !important;
+            }
+            
+            /* Ajustar badges en móvil */
+            .cliente-estado {
+                font-size: 0.7rem;
+                padding: 2px 6px;
             }
         }
     </style>
@@ -1225,57 +1410,59 @@
 
                 <div class="resumen-table">
                     <h3 class="chart-title">Resumen Detallado</h3>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Etapa</th>
-                                <th>Cantidad</th>
-                                <th>Porcentaje</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><span class="status-badge badge-prospecto">Prospecto</span></td>
-                                <td><strong>${asesor.etapas.prospecto || 0}</strong></td>
-                                <td>${Math.round(((asesor.etapas.prospecto || 0) / asesor.totalClientes) * 100)}%</td>
-                            </tr>
-                            <tr>
-                                <td><span class="status-badge badge-oportunidad">Oportunidad</span></td>
-                                <td><strong>${asesor.etapas.oportunidad || 0}</strong></td>
-                                <td>${Math.round(((asesor.etapas.oportunidad || 0) / asesor.totalClientes) * 100)}%</td>
-                            </tr>
-                            <tr>
-                                <td><span class="status-badge badge-documentacion">Negociación</span></td>
-                                <td><strong>${asesor.etapas.negociacion || 0}</strong></td>
-                                <td>${Math.round(((asesor.etapas.negociacion || 0) / asesor.totalClientes) * 100)}%</td>
-                            </tr>
-                            <tr>
-                                <td><span class="status-badge badge-aprobado">Comité</span></td>
-                                <td><strong>${asesor.etapas.comite || 0}</strong></td>
-                                <td>${Math.round(((asesor.etapas.comite || 0) / asesor.totalClientes) * 100)}%</td>
-                            </tr>
-                            <tr>
-                                <td><span class="status-badge badge-desembolso">Leads</span></td>
-                                <td><strong>${asesor.etapas.leads || 0}</strong></td>
-                                <td>${Math.round(((asesor.etapas.leads || 0) / asesor.totalClientes) * 100)}%</td>
-                            </tr>
-                            ${asesor.etapas.desembolso ? `<tr>
-                                <td><span class="status-badge badge-aprobado">Desembolso</span></td>
-                                <td><strong>${asesor.etapas.desembolso}</strong></td>
-                                <td>${Math.round((asesor.etapas.desembolso / asesor.totalClientes) * 100)}%</td>
-                            </tr>` : ''}
-                            ${asesor.etapas.desembolsado ? `<tr>
-                                <td><span class="status-badge badge-desembolso">Desembolsado</span></td>
-                                <td><strong>${asesor.etapas.desembolsado}</strong></td>
-                                <td>${Math.round((asesor.etapas.desembolsado / asesor.totalClientes) * 100)}%</td>
-                            </tr>` : ''}
-                            ${asesor.etapas.reconsideracion ? `<tr>
-                                <td><span class="status-badge badge-oportunidad">Reconsideración</span></td>
-                                <td><strong>${asesor.etapas.reconsideracion}</strong></td>
-                                <td>${Math.round((asesor.etapas.reconsideracion / asesor.totalClientes) * 100)}%</td>
-                            </tr>` : ''}
-                        </tbody>
-                    </table>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Etapa</th>
+                                    <th>Cantidad</th>
+                                    <th>Porcentaje</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="status-badge badge-prospecto">Prospecto</span></td>
+                                    <td><strong>${asesor.etapas.prospecto || 0}</strong></td>
+                                    <td>${Math.round(((asesor.etapas.prospecto || 0) / asesor.totalClientes) * 100)}%</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="status-badge badge-oportunidad">Oportunidad</span></td>
+                                    <td><strong>${asesor.etapas.oportunidad || 0}</strong></td>
+                                    <td>${Math.round(((asesor.etapas.oportunidad || 0) / asesor.totalClientes) * 100)}%</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="status-badge badge-documentacion">Negociación</span></td>
+                                    <td><strong>${asesor.etapas.negociacion || 0}</strong></td>
+                                    <td>${Math.round(((asesor.etapas.negociacion || 0) / asesor.totalClientes) * 100)}%</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="status-badge badge-aprobado">Comité</span></td>
+                                    <td><strong>${asesor.etapas.comite || 0}</strong></td>
+                                    <td>${Math.round(((asesor.etapas.comite || 0) / asesor.totalClientes) * 100)}%</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="status-badge badge-desembolso">Leads</span></td>
+                                    <td><strong>${asesor.etapas.leads || 0}</strong></td>
+                                    <td>${Math.round(((asesor.etapas.leads || 0) / asesor.totalClientes) * 100)}%</td>
+                                </tr>
+                                ${asesor.etapas.desembolso ? `<tr>
+                                    <td><span class="status-badge badge-aprobado">Desembolso</span></td>
+                                    <td><strong>${asesor.etapas.desembolso}</strong></td>
+                                    <td>${Math.round((asesor.etapas.desembolso / asesor.totalClientes) * 100)}%</td>
+                                </tr>` : ''}
+                                ${asesor.etapas.desembolsado ? `<tr>
+                                    <td><span class="status-badge badge-desembolso">Desembolsado</span></td>
+                                    <td><strong>${asesor.etapas.desembolsado}</strong></td>
+                                    <td>${Math.round((asesor.etapas.desembolsado / asesor.totalClientes) * 100)}%</td>
+                                </tr>` : ''}
+                                ${asesor.etapas.reconsideracion ? `<tr>
+                                    <td><span class="status-badge badge-oportunidad">Reconsideración</span></td>
+                                    <td><strong>${asesor.etapas.reconsideracion}</strong></td>
+                                    <td>${Math.round((asesor.etapas.reconsideracion / asesor.totalClientes) * 100)}%</td>
+                                </tr>` : ''}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             `;
             
@@ -1449,11 +1636,11 @@
                     }).join('')}
                 `;
             } else if (tipo === 'coopexpress') {
-                tituloAsesores.textContent = 'Selecciona una sede';
+                tituloAsesores.textContent = 'Sedes Coopexpress';
                 panelAsesores.innerHTML = `
-                    <h3 class="asesores-title">Selecciona una sede</h3>
+                    <h3 class="asesores-title">Sedes Coopexpress</h3>
                     <div style="padding: 20px; text-align: center; color: #666;">
-                        <p>Utiliza el menú de sedes de arriba para seleccionar una ubicación</p>
+                        <p>Utiliza el menú de sedes para navegar entre ubicaciones</p>
                     </div>
                 `;
             } else if (tipo === 'sede') {
@@ -1520,13 +1707,12 @@
             // Limpiar panel de asesores y mostrar mensaje
             actualizarPanelAsesores('coopexpress');
             
-            // Mostrar mensaje para seleccionar sede
+            // Limpiar contenido principal
             const contenido = document.getElementById('contenidoAsesor');
             contenido.innerHTML = `
                 <div class="asesor-header">
-                    <div style="margin-top: 30px; padding: 25px; background: #fff8f0; border-radius: 15px; border: 1px solid rgba(255, 127, 0, 0.2); text-align: center;">
-                        <p style="color: #ff7f00; font-weight: 600; font-size: 1.2rem; margin-bottom: 10px;">🏢 Selecciona una sede</p>
-                        <p style="color: #666; margin-top: 5px; line-height: 1.5;">Utiliza el menú de sedes en la parte superior para navegar entre las diferentes ubicaciones de Coopexpress.</p>
+                    <div style="margin-top: 50px; padding: 30px; text-align: center; color: #999;">
+                        <p style="font-size: 1.1rem;">Selecciona una sede para ver los asesores y sus datos de rendimiento</p>
                     </div>
                 </div>
             `;
