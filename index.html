@@ -586,6 +586,42 @@
                 padding: 2px 6px;
             }
         }
+
+        /* Estilos para el filtro de fechas */
+        .filtro-fechas {
+            animation: fadeIn 0.3s ease;
+        }
+
+        .filtro-fechas select {
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .filtro-fechas select:focus {
+            border-color: #ff7f00;
+            box-shadow: 0 0 0 3px rgba(255, 127, 0, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .filtro-fechas select:hover {
+            border-color: rgba(255, 127, 0, 0.5);
+            box-shadow: 0 2px 8px rgba(255, 127, 0, 0.15);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(100%); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideOut {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(100%); }
+        }
     </style>
 </head>
 <body>
@@ -600,6 +636,44 @@
                     <a href="#" class="nav-link" id="coopexpress-link" onclick="mostrarCoopexpress()">Coopexpress</a>
                 </li>
             </ul>
+            
+            <!-- Filtro de fechas -->
+            <div class="filtro-fechas" style="text-align: center; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255, 127, 0, 0.2);">
+                <label for="fecha-filtro" style="color: #ff7f00; font-weight: 600; margin-right: 10px;">Filtrar por fecha:</label>
+                <select id="fecha-filtro" style="padding: 8px 15px; border: 2px solid rgba(255, 127, 0, 0.3); border-radius: 8px; background: white; color: #333; font-weight: 500;" onchange="aplicarFiltroFecha()">
+                    <option value="todas">Todas las fechas</option>
+                    <option value="2025-09-01">1 de Septiembre</option>
+                    <option value="2025-09-02">2 de Septiembre</option>
+                    <option value="2025-09-03">3 de Septiembre</option>
+                    <option value="2025-09-04">4 de Septiembre</option>
+                    <option value="2025-09-05">5 de Septiembre</option>
+                    <option value="2025-09-06">6 de Septiembre</option>
+                    <option value="2025-09-07">7 de Septiembre</option>
+                    <option value="2025-09-08">8 de Septiembre</option>
+                    <option value="2025-09-09">9 de Septiembre</option>
+                    <option value="2025-09-10">10 de Septiembre</option>
+                    <option value="2025-09-11">11 de Septiembre</option>
+                    <option value="2025-09-12">12 de Septiembre</option>
+                    <option value="2025-09-13">13 de Septiembre</option>
+                    <option value="2025-09-14">14 de Septiembre</option>
+                    <option value="2025-09-15">15 de Septiembre</option>
+                    <option value="2025-09-16">16 de Septiembre</option>
+                    <option value="2025-09-17">17 de Septiembre</option>
+                    <option value="2025-09-18">18 de Septiembre</option>
+                    <option value="2025-09-19">19 de Septiembre</option>
+                    <option value="2025-09-20">20 de Septiembre</option>
+                    <option value="2025-09-21">21 de Septiembre</option>
+                    <option value="2025-09-22">22 de Septiembre</option>
+                    <option value="2025-09-23">23 de Septiembre</option>
+                    <option value="2025-09-24">24 de Septiembre</option>
+                    <option value="2025-09-25">25 de Septiembre</option>
+                    <option value="2025-09-26">26 de Septiembre</option>
+                    <option value="2025-09-27">27 de Septiembre</option>
+                    <option value="2025-09-28">28 de Septiembre</option>
+                    <option value="2025-09-29">29 de Septiembre</option>
+                    <option value="2025-09-30">30 de Septiembre</option>
+                </select>
+            </div>
         </div>
     </nav>
 
@@ -696,6 +770,116 @@
     </div>
 
     <script>
+        // Variables globales para el filtro de fechas
+        let fechaSeleccionada = 'todas';
+        
+        // Función para aplicar filtro por fecha
+        function aplicarFiltroFecha() {
+            fechaSeleccionada = document.getElementById('fecha-filtro').value;
+            
+            // Actualizar la vista actual según qué esté mostrado
+            const agenciaCentralLink = document.getElementById('agencia-central-link');
+            const coopexpressLink = document.getElementById('coopexpress-link');
+            
+            if (agenciaCentralLink.classList.contains('active')) {
+                actualizarPanelAsesores('agencia-central');
+                // Si hay un asesor seleccionado, actualizarlo
+                const asesorActivo = document.querySelector('.asesor-item.active');
+                if (asesorActivo) {
+                    const asesorId = asesorActivo.getAttribute('onclick').match(/'([^']+)'/)[1];
+                    seleccionarAsesor(asesorId);
+                }
+            } else if (coopexpressLink.classList.contains('active')) {
+                // Si hay una sede seleccionada en Coopexpress, actualizarla
+                const sedeActiva = document.querySelector('.sede-item.active');
+                if (sedeActiva) {
+                    const sedeId = sedeActiva.getAttribute('onclick').match(/'([^']+)'/)[1];
+                    seleccionarSede(sedeId);
+                    
+                    // Si hay un asesor seleccionado dentro de la sede, también actualizarlo
+                    const asesorActivo = document.querySelector('.asesor-item.active');
+                    if (asesorActivo) {
+                        const asesorKey = asesorActivo.getAttribute('onclick').match(/'[^']+',\s*'([^']+)'/)[1];
+                        seleccionarAsesorCoopexpress(sedeId, asesorKey);
+                    }
+                } else {
+                    // Si no hay sede seleccionada, actualizar la vista general de Coopexpress
+                    mostrarCoopexpress();
+                }
+            }
+            
+            // Mostrar mensaje temporal de filtro aplicado
+            if (fechaSeleccionada !== 'todas') {
+                // Corregir el manejo de fechas para evitar problemas de zona horaria
+                const [año, mes, dia] = fechaSeleccionada.split('-');
+                const fecha = new Date(parseInt(año), parseInt(mes) - 1, parseInt(dia));
+                const fechaTexto = fecha.toLocaleDateString('es-GT', { day: 'numeric', month: 'long' });
+                mostrarNotificacionFiltro(`Filtro aplicado: ${fechaTexto}`);
+            }
+        }
+        
+        // Función para mostrar notificación temporal
+        function mostrarNotificacionFiltro(mensaje) {
+            // Remover notificación existente si la hay
+            const existente = document.querySelector('.notificacion-filtro');
+            if (existente) existente.remove();
+            
+            const notificacion = document.createElement('div');
+            notificacion.className = 'notificacion-filtro';
+            notificacion.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #ff7f00, #ff9500);
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(255, 127, 0, 0.3);
+                z-index: 1000;
+                font-weight: 600;
+                animation: slideIn 0.3s ease;
+            `;
+            notificacion.textContent = mensaje;
+            
+            document.body.appendChild(notificacion);
+            
+            // Remover después de 3 segundos
+            setTimeout(() => {
+                if (notificacion.parentNode) {
+                    notificacion.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => notificacion.remove(), 300);
+                }
+            }, 3000);
+        }
+        
+        // Función para obtener datos filtrados por fecha
+        function obtenerDatosFiltrados(datosAsesor) {
+            if (fechaSeleccionada === 'todas' || !datosAsesor.porFecha) {
+                return datosAsesor;
+            }
+            
+            const datosFecha = datosAsesor.porFecha[fechaSeleccionada];
+            if (!datosFecha || datosFecha.sinDatos) {
+                // Si no hay datos para la fecha seleccionada, retornar datos vacíos
+                return {
+                    ...datosAsesor,
+                    totalClientes: 0,
+                    clientesActivos: 0,
+                    clientesPerdidos: 0,
+                    etapas: {},
+                    medioGenerador: {},
+                    origen: { asesor: 0, ia: 0 },
+                    sinDatos: true // Marcar que no tiene datos para esta fecha
+                };
+            }
+            
+            return {
+                ...datosAsesor,
+                ...datosFecha,
+                sinDatos: false
+            };
+        }
+        
         // Base de datos de asesores
         const asesoresData = {
             miguel: {
@@ -719,6 +903,105 @@
                 origen: {
                     asesor: 9,
                     ia: 9
+                },
+                // Datos reales por fecha basados en tu tabla
+                porFecha: {
+                    '2025-09-01': {
+                        totalClientes: 2,
+                        clientesActivos: 1,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 2 },
+                        medioGenerador: { whatsapp: 2 },
+                        origen: { ia: 2, asesor: 0 }
+                    },
+                    '2025-09-02': {
+                        totalClientes: 1,
+                        clientesActivos: 1,
+                        clientesPerdidos: 0,
+                        etapas: { negociacion: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    },
+                    '2025-09-03': {
+                        totalClientes: 2,
+                        clientesActivos: 1,
+                        clientesPerdidos: 1,
+                        etapas: { comite: 1, prospecto: 1 },
+                        medioGenerador: { social_manager: 2 },
+                        origen: { asesor: 2, ia: 0 }
+                    },
+                    '2025-09-04': {
+                        totalClientes: 1,
+                        clientesActivos: 0,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    },
+                    '2025-09-05': {
+                        totalClientes: 2,
+                        clientesActivos: 1,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 2 },
+                        medioGenerador: { facebook: 1, whatsapp: 1 },
+                        origen: { ia: 2, asesor: 0 }
+                    },
+                    '2025-09-06': {
+                        totalClientes: 1,
+                        clientesActivos: 0,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 1 },
+                        medioGenerador: { social_manager: 1 },
+                        origen: { asesor: 1, ia: 0 }
+                    },
+                    '2025-09-08': {
+                        totalClientes: 3,
+                        clientesActivos: 3,
+                        clientesPerdidos: 0,
+                        etapas: { prospecto: 2, oportunidad: 1 },
+                        medioGenerador: { sitio_web: 1, social_manager: 2 },
+                        origen: { asesor: 3, ia: 0 }
+                    },
+                    '2025-09-09': {
+                        totalClientes: 2,
+                        clientesActivos: 1,
+                        clientesPerdidos: 1,
+                        etapas: { negociacion: 1, prospecto: 1 },
+                        medioGenerador: { social_manager: 2 },
+                        origen: { asesor: 2, ia: 0 }
+                    },
+                    '2025-09-10': {
+                        totalClientes: 3,
+                        clientesActivos: 3,
+                        clientesPerdidos: 0,
+                        etapas: { prospecto: 2, leads: 1 },
+                        medioGenerador: { social_manager: 3 },
+                        origen: { asesor: 3, ia: 0 }
+                    },
+                    '2025-09-11': {
+                        totalClientes: 2,
+                        clientesActivos: 2,
+                        clientesPerdidos: 0,
+                        etapas: { leads: 2 },
+                        medioGenerador: { whatsapp: 2 },
+                        origen: { ia: 2, asesor: 0 }
+                    },
+                    '2025-09-15': {
+                        totalClientes: 1,
+                        clientesActivos: 0,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 1 },
+                        medioGenerador: { social_manager: 1 },
+                        origen: { asesor: 1, ia: 0 }
+                    },
+                    '2025-09-16': {
+                        totalClientes: 1,
+                        clientesActivos: 1,
+                        clientesPerdidos: 0,
+                        etapas: { leads: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    }
                 }
             },
             emely: {
@@ -748,6 +1031,81 @@
                 origen: {
                     asesor: 9,
                     ia: 4
+                },
+                // Datos reales por fecha basados en tu tabla
+                porFecha: {
+                    '2025-09-01': {
+                        totalClientes: 3,
+                        clientesActivos: 3,
+                        clientesPerdidos: 0,
+                        etapas: { reconsideracion: 1, oportunidad: 1, leads: 1 },
+                        medioGenerador: { whatsapp: 1, social_manager: 2 },
+                        origen: { ia: 1, asesor: 2 }
+                    },
+                    '2025-09-03': {
+                        totalClientes: 2,
+                        clientesActivos: 2,
+                        clientesPerdidos: 0,
+                        etapas: { leads: 2 },
+                        medioGenerador: { social_manager: 1, whatsapp: 1 },
+                        origen: { asesor: 1, ia: 1 }
+                    },
+                    '2025-09-04': {
+                        totalClientes: 1,
+                        clientesActivos: 0,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    },
+                    '2025-09-05': {
+                        totalClientes: 1,
+                        clientesActivos: 1,
+                        clientesPerdidos: 0,
+                        etapas: { oportunidad: 1 },
+                        medioGenerador: { referido: 1 },
+                        origen: { asesor: 1, ia: 0 }
+                    },
+                    '2025-09-08': {
+                        totalClientes: 2,
+                        clientesActivos: 1,
+                        clientesPerdidos: 1,
+                        etapas: { oportunidad: 1, leads: 1 },
+                        medioGenerador: { pbx: 1, social_manager: 1 },
+                        origen: { asesor: 2, ia: 0 }
+                    },
+                    '2025-09-09': {
+                        totalClientes: 1,
+                        clientesActivos: 0,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 1 },
+                        medioGenerador: { social_manager: 1 },
+                        origen: { asesor: 1, ia: 0 }
+                    },
+                    '2025-09-11': {
+                        totalClientes: 1,
+                        clientesActivos: 1,
+                        clientesPerdidos: 0,
+                        etapas: { leads: 1 },
+                        medioGenerador: { social_manager: 1 },
+                        origen: { asesor: 1, ia: 0 }
+                    },
+                    '2025-09-12': {
+                        totalClientes: 2,
+                        clientesActivos: 1,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 2 },
+                        medioGenerador: { social_manager: 2 },
+                        origen: { asesor: 2, ia: 0 }
+                    },
+                    '2025-09-17': {
+                        totalClientes: 1,
+                        clientesActivos: 1,
+                        clientesPerdidos: 0,
+                        etapas: { oportunidad: 1 },
+                        medioGenerador: { facebook: 1 },
+                        origen: { asesor: 1, ia: 0 }
+                    }
                 }
             },
             gabriel: {
@@ -777,6 +1135,105 @@
                 origen: {
                     asesor: 1,
                     ia: 10
+                },
+                // Datos reales por fecha basados en tu tabla
+                porFecha: {
+                    '2025-09-01': {
+                        totalClientes: 1,
+                        clientesActivos: 1,
+                        clientesPerdidos: 0,
+                        etapas: { oportunidad: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    },
+                    '2025-09-02': {
+                        totalClientes: 1,
+                        clientesActivos: 1,
+                        clientesPerdidos: 0,
+                        etapas: { leads: 1 },
+                        medioGenerador: { social_manager: 1 },
+                        origen: { asesor: 1, ia: 0 }
+                    },
+                    '2025-09-03': {
+                        totalClientes: 3,
+                        clientesActivos: 2,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 3 },
+                        medioGenerador: { sitio_web: 1, whatsapp: 2 },
+                        origen: { ia: 3, asesor: 0 }
+                    },
+                    '2025-09-07': {
+                        totalClientes: 2,
+                        clientesActivos: 0,
+                        clientesPerdidos: 2,
+                        etapas: { leads: 2 },
+                        medioGenerador: { whatsapp: 2 },
+                        origen: { ia: 2, asesor: 0 }
+                    },
+                    '2025-09-08': {
+                        totalClientes: 1,
+                        clientesActivos: 0,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 1 },
+                        medioGenerador: { social_manager: 1 },
+                        origen: { asesor: 1, ia: 0 }
+                    },
+                    '2025-09-09': {
+                        totalClientes: 1,
+                        clientesActivos: 0,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    },
+                    '2025-09-10': {
+                        totalClientes: 2,
+                        clientesActivos: 1,
+                        clientesPerdidos: 1,
+                        etapas: { oportunidad: 1, leads: 1 },
+                        medioGenerador: { whatsapp: 2 },
+                        origen: { ia: 2, asesor: 0 }
+                    },
+                    '2025-09-11': {
+                        totalClientes: 1,
+                        clientesActivos: 1,
+                        clientesPerdidos: 0,
+                        etapas: { leads: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    },
+                    '2025-09-12': {
+                        totalClientes: 2,
+                        clientesActivos: 1,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 2 },
+                        medioGenerador: { facebook: 1, whatsapp: 1 },
+                        origen: { ia: 2, asesor: 0 }
+                    },
+                    '2025-09-13': {
+                        totalClientes: 1,
+                        clientesActivos: 1,
+                        clientesPerdidos: 0,
+                        etapas: { leads: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    },
+                    '2025-09-15': {
+                        totalClientes: 1,
+                        clientesActivos: 1,
+                        clientesPerdidos: 0,
+                        etapas: { leads: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    },
+                    '2025-09-16': {
+                        totalClientes: 1,
+                        clientesActivos: 0,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    }
                 }
             },
             brayan: {
@@ -804,6 +1261,121 @@
                 origen: {
                     asesor: 13,
                     ia: 4
+                },
+                // Datos reales por fecha basados en tu tabla
+                porFecha: {
+                    '2025-09-02': {
+                        totalClientes: 1,
+                        clientesActivos: 1,
+                        clientesPerdidos: 0,
+                        etapas: { desembolsado: 1 },
+                        medioGenerador: { pbx: 1 },
+                        origen: { asesor: 1, ia: 0 }
+                    },
+                    '2025-09-03': {
+                        totalClientes: 2,
+                        clientesActivos: 2,
+                        clientesPerdidos: 0,
+                        etapas: { leads: 2 },
+                        medioGenerador: { pbx: 1, social_manager: 1 },
+                        origen: { asesor: 2, ia: 0 }
+                    },
+                    '2025-09-04': {
+                        totalClientes: 2,
+                        clientesActivos: 1,
+                        clientesPerdidos: 1,
+                        etapas: { desembolsado: 1, oportunidad: 1 },
+                        medioGenerador: { whatsapp: 1, pbx: 1 },
+                        origen: { asesor: 2, ia: 0 }
+                    },
+                    '2025-09-05': {
+                        totalClientes: 1,
+                        clientesActivos: 1,
+                        clientesPerdidos: 0,
+                        etapas: { desembolso: 1 },
+                        medioGenerador: { social_manager: 1 },
+                        origen: { asesor: 1, ia: 0 }
+                    },
+                    '2025-09-06': {
+                        totalClientes: 1,
+                        clientesActivos: 1,
+                        clientesPerdidos: 0,
+                        etapas: { leads: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    },
+                    '2025-09-07': {
+                        totalClientes: 1,
+                        clientesActivos: 0,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    },
+                    '2025-09-08': {
+                        totalClientes: 1,
+                        clientesActivos: 0,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 1 },
+                        medioGenerador: { social_manager: 1 },
+                        origen: { asesor: 1, ia: 0 }
+                    },
+                    '2025-09-09': {
+                        totalClientes: 2,
+                        clientesActivos: 1,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 2 },
+                        medioGenerador: { social_manager: 1, whatsapp: 1 },
+                        origen: { asesor: 1, ia: 1 }
+                    },
+                    '2025-09-10': {
+                        totalClientes: 1,
+                        clientesActivos: 1,
+                        clientesPerdidos: 0,
+                        etapas: { oportunidad: 1 },
+                        medioGenerador: { visita_oficina: 1 },
+                        origen: { asesor: 1, ia: 0 }
+                    },
+                    '2025-09-11': {
+                        totalClientes: 1,
+                        clientesActivos: 1,
+                        clientesPerdidos: 0,
+                        etapas: { leads: 1 },
+                        medioGenerador: { social_manager: 1 },
+                        origen: { asesor: 1, ia: 0 }
+                    },
+                    '2025-09-12': {
+                        totalClientes: 1,
+                        clientesActivos: 1,
+                        clientesPerdidos: 0,
+                        etapas: { leads: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    },
+                    '2025-09-15': {
+                        totalClientes: 1,
+                        clientesActivos: 1,
+                        clientesPerdidos: 0,
+                        etapas: { leads: 1 },
+                        medioGenerador: { sitio_web: 1 },
+                        origen: { asesor: 1, ia: 0 }
+                    },
+                    '2025-09-16': {
+                        totalClientes: 2,
+                        clientesActivos: 1,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 2 },
+                        medioGenerador: { sitio_web: 1, social_manager: 1 },
+                        origen: { asesor: 2, ia: 0 }
+                    },
+                    '2025-09-17': {
+                        totalClientes: 2,
+                        clientesActivos: 1,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 2 },
+                        medioGenerador: { referido: 1, whatsapp: 1 },
+                        origen: { asesor: 1, ia: 1 }
+                    }
                 }
             },
             rudy: {
@@ -833,6 +1405,81 @@
                 origen: {
                     asesor: 2,
                     ia: 4
+                },
+                // Datos reales por fecha basados en tu tabla
+                porFecha: {
+                    '2025-09-01': {
+                        totalClientes: 1,
+                        clientesActivos: 1,
+                        clientesPerdidos: 0,
+                        etapas: { reconsideracion: 1 },
+                        medioGenerador: { social_manager: 1 },
+                        origen: { asesor: 1, ia: 0 }
+                    },
+                    '2025-09-03': {
+                        totalClientes: 1,
+                        clientesActivos: 0,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    },
+                    '2025-09-05': {
+                        totalClientes: 1,
+                        clientesActivos: 1,
+                        clientesPerdidos: 0,
+                        etapas: { reconsideracion: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    },
+                    '2025-09-06': {
+                        totalClientes: 1,
+                        clientesActivos: 0,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    },
+                    '2025-09-07': {
+                        totalClientes: 1,
+                        clientesActivos: 0,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    },
+                    '2025-09-08': {
+                        totalClientes: 2,
+                        clientesActivos: 2,
+                        clientesPerdidos: 0,
+                        etapas: { oportunidad: 1, negociacion: 1 },
+                        medioGenerador: { whatsapp: 1, pbx: 1 },
+                        origen: { ia: 1, asesor: 1 }
+                    },
+                    '2025-09-09': {
+                        totalClientes: 1,
+                        clientesActivos: 0,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 1 },
+                        medioGenerador: { facebook: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    },
+                    '2025-09-10': {
+                        totalClientes: 1,
+                        clientesActivos: 0,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    },
+                    '2025-09-12': {
+                        totalClientes: 1,
+                        clientesActivos: 1,
+                        clientesPerdidos: 0,
+                        etapas: { prospecto: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    }
                 }
             },
             jorge: {
@@ -862,6 +1509,113 @@
                 origen: {
                     asesor: 1,
                     ia: 7
+                },
+                // Datos reales por fecha basados en tu tabla
+                porFecha: {
+                    '2025-09-02': {
+                        totalClientes: 1,
+                        clientesActivos: 1,
+                        clientesPerdidos: 0,
+                        etapas: { oportunidad: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    },
+                    '2025-09-03': {
+                        totalClientes: 1,
+                        clientesActivos: 0,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    },
+                    '2025-09-04': {
+                        totalClientes: 1,
+                        clientesActivos: 0,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 1 },
+                        medioGenerador: { social_manager: 1 },
+                        origen: { asesor: 1, ia: 0 }
+                    },
+                    '2025-09-05': {
+                        totalClientes: 2,
+                        clientesActivos: 0,
+                        clientesPerdidos: 2,
+                        etapas: { leads: 2 },
+                        medioGenerador: { whatsapp: 1, social_manager: 1 },
+                        origen: { ia: 1, asesor: 1 }
+                    },
+                    '2025-09-06': {
+                        totalClientes: 1,
+                        clientesActivos: 0,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    },
+                    '2025-09-08': {
+                        totalClientes: 1,
+                        clientesActivos: 0,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    },
+                    '2025-09-09': {
+                        totalClientes: 3,
+                        clientesActivos: 0,
+                        clientesPerdidos: 3,
+                        etapas: { leads: 3 },
+                        medioGenerador: { whatsapp: 1, facebook: 1, social_manager: 1 },
+                        origen: { ia: 2, asesor: 1 }
+                    },
+                    '2025-09-10': {
+                        totalClientes: 1,
+                        clientesActivos: 0,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    },
+                    '2025-09-11': {
+                        totalClientes: 2,
+                        clientesActivos: 1,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 2 },
+                        medioGenerador: { whatsapp: 2 },
+                        origen: { ia: 2, asesor: 0 }
+                    },
+                    '2025-09-13': {
+                        totalClientes: 1,
+                        clientesActivos: 1,
+                        clientesPerdidos: 0,
+                        etapas: { leads: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    },
+                    '2025-09-16': {
+                        totalClientes: 1,
+                        clientesActivos: 0,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    },
+                    '2025-09-17': {
+                        totalClientes: 3,
+                        clientesActivos: 1,
+                        clientesPerdidos: 2,
+                        etapas: { prospecto: 1, leads: 2 },
+                        medioGenerador: { whatsapp: 3 },
+                        origen: { ia: 3, asesor: 0 }
+                    },
+                    '2025-09-18': {
+                        totalClientes: 1,
+                        clientesActivos: 1,
+                        clientesPerdidos: 0,
+                        etapas: { leads: 1 },
+                        medioGenerador: { social_manager: 1 },
+                        origen: { asesor: 1, ia: 0 }
+                    }
                 }
             },
             carlos: {
@@ -890,6 +1644,129 @@
                 origen: {
                     asesor: 9,
                     ia: 7
+                },
+                // Datos reales por fecha basados en tu tabla
+                porFecha: {
+                    '2025-09-01': {
+                        totalClientes: 3,
+                        clientesActivos: 3,
+                        clientesPerdidos: 0,
+                        etapas: { oportunidad: 3 },
+                        medioGenerador: { social_manager: 2, whatsapp: 1 },
+                        origen: { asesor: 3, ia: 0 }
+                    },
+                    '2025-09-02': {
+                        totalClientes: 1,
+                        clientesActivos: 1,
+                        clientesPerdidos: 0,
+                        etapas: { comite: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    },
+                    '2025-09-03': {
+                        totalClientes: 2,
+                        clientesActivos: 2,
+                        clientesPerdidos: 0,
+                        etapas: { leads: 1, comite: 1 },
+                        medioGenerador: { social_manager: 2 },
+                        origen: { asesor: 2, ia: 0 }
+                    },
+                    '2025-09-04': {
+                        totalClientes: 2,
+                        clientesActivos: 0,
+                        clientesPerdidos: 2,
+                        etapas: { leads: 2 },
+                        medioGenerador: { social_manager: 2 },
+                        origen: { asesor: 2, ia: 0 }
+                    },
+                    '2025-09-05': {
+                        totalClientes: 5,
+                        clientesActivos: 1,
+                        clientesPerdidos: 4,
+                        etapas: { oportunidad: 1, leads: 4 },
+                        medioGenerador: { social_manager: 4, whatsapp: 1 },
+                        origen: { asesor: 1, ia: 4 }
+                    },
+                    '2025-09-07': {
+                        totalClientes: 1,
+                        clientesActivos: 0,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    },
+                    '2025-09-08': {
+                        totalClientes: 3,
+                        clientesActivos: 1,
+                        clientesPerdidos: 2,
+                        etapas: { oportunidad: 1, leads: 2 },
+                        medioGenerador: { pbx: 1, social_manager: 2 },
+                        origen: { asesor: 1, ia: 2 }
+                    },
+                    '2025-09-09': {
+                        totalClientes: 4,
+                        clientesActivos: 1,
+                        clientesPerdidos: 3,
+                        etapas: { leads: 4 },
+                        medioGenerador: { facebook: 1, whatsapp: 2, social_manager: 1 },
+                        origen: { ia: 3, asesor: 1 }
+                    },
+                    '2025-09-10': {
+                        totalClientes: 2,
+                        clientesActivos: 0,
+                        clientesPerdidos: 2,
+                        etapas: { leads: 2 },
+                        medioGenerador: { whatsapp: 1, social_manager: 1 },
+                        origen: { ia: 1, asesor: 1 }
+                    },
+                    '2025-09-11': {
+                        totalClientes: 2,
+                        clientesActivos: 0,
+                        clientesPerdidos: 2,
+                        etapas: { leads: 2 },
+                        medioGenerador: { social_manager: 1, facebook: 1 },
+                        origen: { asesor: 1, ia: 1 }
+                    },
+                    '2025-09-12': {
+                        totalClientes: 1,
+                        clientesActivos: 0,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    },
+                    '2025-09-14': {
+                        totalClientes: 1,
+                        clientesActivos: 0,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 1 },
+                        medioGenerador: { sitio_web: 1 },
+                        origen: { asesor: 1, ia: 0 }
+                    },
+                    '2025-09-15': {
+                        totalClientes: 1,
+                        clientesActivos: 0,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 1 },
+                        medioGenerador: { whatsapp: 1 },
+                        origen: { ia: 1, asesor: 0 }
+                    },
+                    '2025-09-16': {
+                        totalClientes: 2,
+                        clientesActivos: 1,
+                        clientesPerdidos: 1,
+                        etapas: { leads: 2 },
+                        medioGenerador: { whatsapp: 2 },
+                        origen: { ia: 2, asesor: 0 }
+                    },
+                    '2025-09-17': {
+                        totalClientes: 2,
+                        clientesActivos: 0,
+                        clientesPerdidos: 2,
+                        etapas: { leads: 2 },
+                        medioGenerador: { whatsapp: 1, facebook: 1 },
+                        origen: { ia: 2, asesor: 0 }
+                    }
                 }
             },
             kevin: {
@@ -919,6 +1796,17 @@
                 origen: {
                     asesor: 1,
                     ia: 0
+                },
+                // Datos reales por fecha basados en tu tabla
+                porFecha: {
+                    '2025-09-01': {
+                        totalClientes: 1,
+                        clientesActivos: 1,
+                        clientesPerdidos: 0,
+                        etapas: { leads: 1 },
+                        medioGenerador: { social_manager: 1 },
+                        origen: { asesor: 1, ia: 0 }
+                    }
                 }
             }
         };
@@ -959,6 +1847,160 @@
                     origen: {
                         asesor: 20, // Solo los casos activos
                         ia: 0
+                    },
+                    // Datos reales por fecha basados en tu tabla
+                    porFecha: {
+                        '2025-09-01': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { 
+                                prospecto: 0, oportunidad: 0, negociacion: 0, comite: 0, leads: 0, desembolso: 1, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 0, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 1, referido: 0, visita_oficina: 0 
+                            },
+                            origen: { asesor: 1, ia: 0 }
+                        },
+                        '2025-09-02': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { 
+                                prospecto: 0, oportunidad: 1, negociacion: 0, comite: 0, leads: 0, desembolso: 0, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 1, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 0, referido: 0, visita_oficina: 0 
+                            },
+                            origen: { asesor: 1, ia: 0 }
+                        },
+                        '2025-09-03': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { 
+                                prospecto: 1, oportunidad: 0, negociacion: 0, comite: 0, leads: 0, desembolso: 0, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 1, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 0, referido: 0, visita_oficina: 0 
+                            },
+                            origen: { asesor: 1, ia: 0 }
+                        },
+                        '2025-09-04': { sinDatos: true },
+                        '2025-09-05': {
+                            totalClientes: 1,
+                            clientesActivos: 0,
+                            clientesPerdidos: 1,
+                            etapas: { 
+                                prospecto: 0, oportunidad: 1, negociacion: 0, comite: 0, leads: 0, desembolso: 0, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 1, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 0, referido: 0, visita_oficina: 0 
+                            },
+                            origen: { asesor: 1, ia: 0 }
+                        },
+                        '2025-09-06': { sinDatos: true },
+                        '2025-09-07': { sinDatos: true },
+                        '2025-09-08': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { 
+                                prospecto: 0, oportunidad: 0, negociacion: 0, comite: 0, leads: 1, desembolso: 0, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 1, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 0, referido: 0, visita_oficina: 0 
+                            },
+                            origen: { asesor: 1, ia: 0 }
+                        },
+                        '2025-09-09': {
+                            totalClientes: 2,
+                            clientesActivos: 1,
+                            clientesPerdidos: 1,
+                            etapas: { 
+                                prospecto: 1, oportunidad: 1, negociacion: 0, comite: 0, leads: 0, desembolso: 0, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 2, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 0, referido: 0, visita_oficina: 0 
+                            },
+                            origen: { asesor: 2, ia: 0 }
+                        },
+                        '2025-09-10': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { 
+                                prospecto: 0, oportunidad: 1, negociacion: 0, comite: 0, leads: 0, desembolso: 0, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 1, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 0, referido: 0, visita_oficina: 0 
+                            },
+                            origen: { asesor: 1, ia: 0 }
+                        },
+                        '2025-09-11': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { 
+                                prospecto: 0, oportunidad: 0, negociacion: 0, comite: 0, leads: 1, desembolso: 0, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 1, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 0, referido: 0, visita_oficina: 0 
+                            },
+                            origen: { asesor: 1, ia: 0 }
+                        },
+                        '2025-09-12': { sinDatos: true },
+                        '2025-09-13': { sinDatos: true },
+                        '2025-09-14': { sinDatos: true },
+                        '2025-09-15': { sinDatos: true },
+                        '2025-09-16': {
+                            totalClientes: 3,
+                            clientesActivos: 3,
+                            clientesPerdidos: 0,
+                            etapas: { 
+                                prospecto: 3, oportunidad: 0, negociacion: 0, comite: 0, leads: 0, desembolso: 0, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 3, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 0, referido: 0, visita_oficina: 0 
+                            },
+                            origen: { asesor: 3, ia: 0 }
+                        },
+                        '2025-09-17': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { 
+                                prospecto: 0, oportunidad: 0, negociacion: 1, comite: 0, leads: 0, desembolso: 0, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 0, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 0, referido: 0, visita_oficina: 1 
+                            },
+                            origen: { asesor: 1, ia: 0 }
+                        },
+                        '2025-09-18': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { 
+                                prospecto: 1, oportunidad: 0, negociacion: 0, comite: 0, leads: 0, desembolso: 0, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 1, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 0, referido: 0, visita_oficina: 0 
+                            },
+                            origen: { asesor: 1, ia: 0 }
+                        },
+                        '2025-09-19': { sinDatos: true },
+                        '2025-09-20': { sinDatos: true },
+                        '2025-09-21': { sinDatos: true },
+                        '2025-09-22': { sinDatos: true },
+                        '2025-09-23': { sinDatos: true },
+                        '2025-09-24': { sinDatos: true },
+                        '2025-09-25': { sinDatos: true },
+                        '2025-09-26': { sinDatos: true },
+                        '2025-09-27': { sinDatos: true },
+                        '2025-09-28': { sinDatos: true },
+                        '2025-09-29': { sinDatos: true },
+                        '2025-09-30': { sinDatos: true }
                     }
                 },
                 // Datos individuales de Monica
@@ -988,6 +2030,168 @@
                     origen: {
                         asesor: 11, // Todos los casos son gestionados por asesor
                         ia: 0
+                    },
+                    porFecha: {
+                        '2025-09-01': {
+                            totalClientes: 1,
+                            clientesActivos: 0,
+                            clientesPerdidos: 1,
+                            etapas: {
+                                prospecto: 0,
+                                oportunidad: 0,
+                                negociacion: 0,
+                                comite: 0,
+                                leads: 1, // guadalupelemus1289
+                                desembolso: 0,
+                                desembolsado: 0
+                            },
+                            medioGenerador: {
+                                social_manager: 1,
+                                whatsapp: 0,
+                                facebook: 0,
+                                sitio_web: 0,
+                                pbx: 0,
+                                referido: 0,
+                                visita_oficina: 0
+                            },
+                            origen: {
+                                asesor: 1,
+                                ia: 0
+                            }
+                        },
+                        '2025-09-02': { sinDatos: true },
+                        '2025-09-03': {
+                            totalClientes: 3,
+                            clientesActivos: 1,
+                            clientesPerdidos: 2,
+                            etapas: {
+                                prospecto: 0,
+                                oportunidad: 1, // MARCELINA RAMOS (perdido)
+                                negociacion: 0,
+                                comite: 0,
+                                leads: 2, // ?? (perdido), Merin (perdido), Lucky (activo)
+                                desembolso: 0,
+                                desembolsado: 0
+                            },
+                            medioGenerador: {
+                                social_manager: 3,
+                                whatsapp: 0,
+                                facebook: 0,
+                                sitio_web: 0,
+                                pbx: 0,
+                                referido: 0,
+                                visita_oficina: 0
+                            },
+                            origen: {
+                                asesor: 3,
+                                ia: 0
+                            }
+                        },
+                        '2025-09-04': {
+                            totalClientes: 2,
+                            clientesActivos: 1,
+                            clientesPerdidos: 1,
+                            etapas: {
+                                prospecto: 0,
+                                oportunidad: 1, // FREDY SEQUEC (perdido)
+                                negociacion: 0,
+                                comite: 0,
+                                leads: 1, // ANCELMO CHE (activo)
+                                desembolso: 0,
+                                desembolsado: 0
+                            },
+                            medioGenerador: {
+                                social_manager: 2,
+                                whatsapp: 0,
+                                facebook: 0,
+                                sitio_web: 0,
+                                pbx: 0,
+                                referido: 0,
+                                visita_oficina: 0
+                            },
+                            origen: {
+                                asesor: 2,
+                                ia: 0
+                            }
+                        },
+                        '2025-09-05': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: {
+                                prospecto: 0,
+                                oportunidad: 0,
+                                negociacion: 0,
+                                comite: 0,
+                                leads: 1, // MYNOR SECAIDA (activo)
+                                desembolso: 0,
+                                desembolsado: 0
+                            },
+                            medioGenerador: {
+                                social_manager: 1,
+                                whatsapp: 0,
+                                facebook: 0,
+                                sitio_web: 0,
+                                pbx: 0,
+                                referido: 0,
+                                visita_oficina: 0
+                            },
+                            origen: {
+                                asesor: 1,
+                                ia: 0
+                            }
+                        },
+                        '2025-09-06': { sinDatos: true },
+                        '2025-09-07': { sinDatos: true },
+                        '2025-09-08': {
+                            totalClientes: 3,
+                            clientesActivos: 1,
+                            clientesPerdidos: 2,
+                            etapas: {
+                                prospecto: 1, // Edgar Lemus (activo)
+                                oportunidad: 1, // Lesly Sanchez (perdido)
+                                negociacion: 0,
+                                comite: 0,
+                                leads: 1, // Ditto (perdido)
+                                desembolso: 0,
+                                desembolsado: 0
+                            },
+                            medioGenerador: {
+                                social_manager: 3,
+                                whatsapp: 0,
+                                facebook: 0,
+                                sitio_web: 0,
+                                pbx: 0,
+                                referido: 0,
+                                visita_oficina: 0
+                            },
+                            origen: {
+                                asesor: 3,
+                                ia: 0
+                            }
+                        },
+                        '2025-09-09': { sinDatos: true },
+                        '2025-09-10': { sinDatos: true },
+                        '2025-09-11': { sinDatos: true },
+                        '2025-09-12': { sinDatos: true },
+                        '2025-09-13': { sinDatos: true },
+                        '2025-09-14': { sinDatos: true },
+                        '2025-09-15': { sinDatos: true },
+                        '2025-09-16': { sinDatos: true },
+                        '2025-09-17': { sinDatos: true },
+                        '2025-09-18': { sinDatos: true },
+                        '2025-09-19': { sinDatos: true },
+                        '2025-09-20': { sinDatos: true },
+                        '2025-09-21': { sinDatos: true },
+                        '2025-09-22': { sinDatos: true },
+                        '2025-09-23': { sinDatos: true },
+                        '2025-09-24': { sinDatos: true },
+                        '2025-09-25': { sinDatos: true },
+                        '2025-09-26': { sinDatos: true },
+                        '2025-09-27': { sinDatos: true },
+                        '2025-09-28': { sinDatos: true },
+                        '2025-09-29': { sinDatos: true },
+                        '2025-09-30': { sinDatos: true }
                     }
                 }
             },
@@ -1025,6 +2229,82 @@
                     origen: {
                         asesor: 5, // La mayoría
                         ia: 1 // Rolando Garcia
+                    },
+                    porFecha: {
+                        '2025-09-01': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { 
+                                prospecto: 0, oportunidad: 0, negociacion: 0, comite: 0, leads: 1, desembolso: 0, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 1, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 0, referido: 0, visita_oficina: 0 
+                            },
+                            origen: { asesor: 1, ia: 0 }
+                        },
+                        '2025-09-02': { sinDatos: true },
+                        '2025-09-03': { sinDatos: true },
+                        '2025-09-04': { sinDatos: true },
+                        '2025-09-05': { sinDatos: true },
+                        '2025-09-06': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { 
+                                prospecto: 0, oportunidad: 1, negociacion: 0, comite: 0, leads: 0, desembolso: 0, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 1, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 0, referido: 0, visita_oficina: 0 
+                            },
+                            origen: { asesor: 1, ia: 0 }
+                        },
+                        '2025-09-07': { sinDatos: true },
+                        '2025-09-08': { sinDatos: true },
+                        '2025-09-09': { sinDatos: true },
+                        '2025-09-10': { sinDatos: true },
+                        '2025-09-11': { sinDatos: true },
+                        '2025-09-12': { sinDatos: true },
+                        '2025-09-13': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { 
+                                prospecto: 0, oportunidad: 1, negociacion: 0, comite: 0, leads: 0, desembolso: 0, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 0, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 0, referido: 0, visita_oficina: 1 
+                            },
+                            origen: { asesor: 1, ia: 0 }
+                        },
+                        '2025-09-14': { sinDatos: true },
+                        '2025-09-15': { sinDatos: true },
+                        '2025-09-16': { sinDatos: true },
+                        '2025-09-17': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { 
+                                prospecto: 0, oportunidad: 0, negociacion: 0, comite: 0, leads: 1, desembolso: 0, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 1, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 0, referido: 0, visita_oficina: 0 
+                            },
+                            origen: { asesor: 1, ia: 0 }
+                        },
+                        '2025-09-18': { sinDatos: true },
+                        '2025-09-19': { sinDatos: true },
+                        '2025-09-20': { sinDatos: true },
+                        '2025-09-21': { sinDatos: true },
+                        '2025-09-22': { sinDatos: true },
+                        '2025-09-23': { sinDatos: true },
+                        '2025-09-24': { sinDatos: true },
+                        '2025-09-25': { sinDatos: true },
+                        '2025-09-26': { sinDatos: true },
+                        '2025-09-27': { sinDatos: true },
+                        '2025-09-28': { sinDatos: true },
+                        '2025-09-29': { sinDatos: true },
+                        '2025-09-30': { sinDatos: true }
                     }
                 },
                 // Datos individuales de Lidia
@@ -1054,6 +2334,49 @@
                     origen: {
                         asesor: 1, // 100%
                         ia: 0
+                    },
+                    porFecha: {
+                        '2025-09-01': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { 
+                                prospecto: 0, oportunidad: 0, negociacion: 0, comite: 0, leads: 1, desembolso: 0, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 1, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 0, referido: 0, visita_oficina: 0 
+                            },
+                            origen: { asesor: 1, ia: 0 }
+                        },
+                        '2025-09-02': { sinDatos: true },
+                        '2025-09-03': { sinDatos: true },
+                        '2025-09-04': { sinDatos: true },
+                        '2025-09-05': { sinDatos: true },
+                        '2025-09-06': { sinDatos: true },
+                        '2025-09-07': { sinDatos: true },
+                        '2025-09-08': { sinDatos: true },
+                        '2025-09-09': { sinDatos: true },
+                        '2025-09-10': { sinDatos: true },
+                        '2025-09-11': { sinDatos: true },
+                        '2025-09-12': { sinDatos: true },
+                        '2025-09-13': { sinDatos: true },
+                        '2025-09-14': { sinDatos: true },
+                        '2025-09-15': { sinDatos: true },
+                        '2025-09-16': { sinDatos: true },
+                        '2025-09-17': { sinDatos: true },
+                        '2025-09-18': { sinDatos: true },
+                        '2025-09-19': { sinDatos: true },
+                        '2025-09-20': { sinDatos: true },
+                        '2025-09-21': { sinDatos: true },
+                        '2025-09-22': { sinDatos: true },
+                        '2025-09-23': { sinDatos: true },
+                        '2025-09-24': { sinDatos: true },
+                        '2025-09-25': { sinDatos: true },
+                        '2025-09-26': { sinDatos: true },
+                        '2025-09-27': { sinDatos: true },
+                        '2025-09-28': { sinDatos: true },
+                        '2025-09-29': { sinDatos: true },
+                        '2025-09-30': { sinDatos: true }
                     }
                 },
                 // Datos individuales de Mildred
@@ -1083,25 +2406,200 @@
                     origen: {
                         asesor: 45, // Todos gestionados por asesor
                         ia: 0
+                    },
+                    porFecha: {
+                        '2025-09-01': {
+                            totalClientes: 1,
+                            clientesActivos: 0,
+                            clientesPerdidos: 1,
+                            etapas: { 
+                                prospecto: 0, oportunidad: 0, negociacion: 0, comite: 0, leads: 1, desembolso: 0, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 1, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 0, referido: 0, visita_oficina: 0 
+                            },
+                            origen: { asesor: 1, ia: 0 }
+                        },
+                        '2025-09-02': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { 
+                                prospecto: 1, oportunidad: 0, negociacion: 0, comite: 0, leads: 0, desembolso: 0, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 1, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 0, referido: 0, visita_oficina: 0 
+                            },
+                            origen: { asesor: 1, ia: 0 }
+                        },
+                        '2025-09-03': {
+                            totalClientes: 1,
+                            clientesActivos: 0,
+                            clientesPerdidos: 1,
+                            etapas: { 
+                                prospecto: 0, oportunidad: 1, negociacion: 0, comite: 0, leads: 0, desembolso: 0, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 0, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 0, referido: 0, visita_oficina: 1 
+                            },
+                            origen: { asesor: 1, ia: 0 }
+                        },
+                        '2025-09-04': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { 
+                                prospecto: 0, oportunidad: 0, negociacion: 0, comite: 1, leads: 0, desembolso: 0, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 0, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 0, referido: 0, visita_oficina: 1 
+                            },
+                            origen: { asesor: 1, ia: 0 }
+                        },
+                        '2025-09-05': {
+                            totalClientes: 3,
+                            clientesActivos: 3,
+                            clientesPerdidos: 0,
+                            etapas: { 
+                                prospecto: 0, oportunidad: 3, negociacion: 0, comite: 0, leads: 0, desembolso: 0, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 0, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 0, referido: 0, visita_oficina: 3 
+                            },
+                            origen: { asesor: 3, ia: 0 }
+                        },
+                        '2025-09-06': {
+                            totalClientes: 2,
+                            clientesActivos: 0,
+                            clientesPerdidos: 2,
+                            etapas: { 
+                                prospecto: 0, oportunidad: 2, negociacion: 0, comite: 0, leads: 0, desembolso: 0, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 0, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 0, referido: 0, visita_oficina: 2 
+                            },
+                            origen: { asesor: 2, ia: 0 }
+                        },
+                        '2025-09-07': { sinDatos: true },
+                        '2025-09-08': {
+                            totalClientes: 8,
+                            clientesActivos: 8,
+                            clientesPerdidos: 0,
+                            etapas: { 
+                                prospecto: 0, oportunidad: 0, negociacion: 0, comite: 0, leads: 8, desembolso: 0, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 8, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 0, referido: 0, visita_oficina: 0 
+                            },
+                            origen: { asesor: 8, ia: 0 }
+                        },
+                        '2025-09-09': {
+                            totalClientes: 2,
+                            clientesActivos: 2,
+                            clientesPerdidos: 0,
+                            etapas: { 
+                                prospecto: 0, oportunidad: 2, negociacion: 0, comite: 0, leads: 0, desembolso: 0, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 1, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 0, referido: 0, visita_oficina: 1 
+                            },
+                            origen: { asesor: 2, ia: 0 }
+                        },
+                        '2025-09-10': {
+                            totalClientes: 6,
+                            clientesActivos: 6,
+                            clientesPerdidos: 0,
+                            etapas: { 
+                                prospecto: 0, oportunidad: 6, negociacion: 0, comite: 0, leads: 0, desembolso: 0, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 2, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 1, referido: 0, visita_oficina: 3 
+                            },
+                            origen: { asesor: 6, ia: 0 }
+                        },
+                        '2025-09-11': {
+                            totalClientes: 5,
+                            clientesActivos: 0,
+                            clientesPerdidos: 5,
+                            etapas: { 
+                                prospecto: 0, oportunidad: 0, negociacion: 0, comite: 0, leads: 5, desembolso: 0, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 5, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 0, referido: 0, visita_oficina: 0 
+                            },
+                            origen: { asesor: 5, ia: 0 }
+                        },
+                        '2025-09-12': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { 
+                                prospecto: 1, oportunidad: 0, negociacion: 0, comite: 0, leads: 0, desembolso: 0, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 1, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 0, referido: 0, visita_oficina: 0 
+                            },
+                            origen: { asesor: 1, ia: 0 }
+                        },
+                        '2025-09-13': {
+                            totalClientes: 3,
+                            clientesActivos: 3,
+                            clientesPerdidos: 0,
+                            etapas: { 
+                                prospecto: 2, oportunidad: 1, negociacion: 0, comite: 0, leads: 0, desembolso: 0, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 1, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 1, referido: 1, visita_oficina: 0 
+                            },
+                            origen: { asesor: 3, ia: 0 }
+                        },
+                        '2025-09-14': {
+                            totalClientes: 3,
+                            clientesActivos: 3,
+                            clientesPerdidos: 0,
+                            etapas: { 
+                                prospecto: 3, oportunidad: 0, negociacion: 0, comite: 0, leads: 0, desembolso: 0, desembolsado: 0 
+                            },
+                            medioGenerador: { 
+                                social_manager: 3, whatsapp: 0, facebook: 0, sitio_web: 0, pbx: 0, referido: 0, visita_oficina: 0 
+                            },
+                            origen: { asesor: 3, ia: 0 }
+                        },
+                        '2025-09-15': { sinDatos: true },
+                        '2025-09-16': { sinDatos: true },
+                        '2025-09-17': { sinDatos: true },
+                        '2025-09-18': { sinDatos: true },
+                        '2025-09-19': { sinDatos: true },
+                        '2025-09-20': { sinDatos: true },
+                        '2025-09-21': { sinDatos: true },
+                        '2025-09-22': { sinDatos: true },
+                        '2025-09-23': { sinDatos: true },
+                        '2025-09-24': { sinDatos: true },
+                        '2025-09-25': { sinDatos: true },
+                        '2025-09-26': { sinDatos: true },
+                        '2025-09-27': { sinDatos: true },
+                        '2025-09-28': { sinDatos: true },
+                        '2025-09-29': { sinDatos: true },
+                        '2025-09-30': { sinDatos: true }
                     }
                 }
             },
             '4caminos': {
                 // Totales de la sede 4 Caminos (Andony + Brandon + Jorge)
                 totalSede: {
-                    totalClientes: 10,
-                    clientesActivos: 8,
-                    clientesPerdidos: 2
+                    totalClientes: 9, // Total según tabla Excel
+                    clientesActivos: 8, // 8 activos
+                    clientesPerdidos: 1 // 1 perdido (Jorge 08-sep)
                 },
                 // Datos individuales de Andony
                 andony: {
                     nombre: "Andony",
-                    totalClientes: 4, // Total casos de Andony
-                    clientesActivos: 4, // Todos activos
+                    totalClientes: 5, // Total casos de Andony según tabla
+                    clientesActivos: 5, // Todos activos
                     clientesPerdidos: 0, // Ninguno perdido
                     etapas: {
                         prospecto: 0,
-                        oportunidad: 4, // Donald, Ingrid, Alba, Adilene - todos en OPORTUNIDAD
+                        oportunidad: 5, // Todos en OPORTUNIDAD
                         negociacion: 0,
                         comite: 0,
                         leads: 0,
@@ -1109,8 +2607,8 @@
                         desembolsado: 0
                     },
                     medioGenerador: {
-                        social_manager: 4, // Todos los casos son SOCIAL MANAGER
-                        whatsapp: 0,
+                        social_manager: 4, // 16-sep, 09-sep, 04-sep, 01-sep
+                        whatsapp: 1, // 11-sep
                         facebook: 0,
                         sitio_web: 0,
                         pbx: 0,
@@ -1118,209 +2616,86 @@
                         visita_oficina: 0
                     },
                     origen: {
-                        asesor: 4, // Todos gestionados por asesor
+                        asesor: 5, // Todos gestionados por asesor
                         ia: 0
+                    },
+                    porFecha: {
+                        '2025-09-01': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { oportunidad: 1 },
+                            medioGenerador: { social_manager: 1 },
+                            origen: { asesor: 1 }
+                        },
+                        '2025-09-02': { sinDatos: true },
+                        '2025-09-03': { sinDatos: true },
+                        '2025-09-04': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { oportunidad: 1 },
+                            medioGenerador: { social_manager: 1 },
+                            origen: { asesor: 1 }
+                        },
+                        '2025-09-05': { sinDatos: true },
+                        '2025-09-06': { sinDatos: true },
+                        '2025-09-07': { sinDatos: true },
+                        '2025-09-08': { sinDatos: true },
+                        '2025-09-09': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { oportunidad: 1 },
+                            medioGenerador: { social_manager: 1 },
+                            origen: { asesor: 1 }
+                        },
+                        '2025-09-10': { sinDatos: true },
+                        '2025-09-11': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { oportunidad: 1 },
+                            medioGenerador: { whatsapp: 1 },
+                            origen: { asesor: 1 }
+                        },
+                        '2025-09-12': { sinDatos: true },
+                        '2025-09-13': { sinDatos: true },
+                        '2025-09-14': { sinDatos: true },
+                        '2025-09-15': { sinDatos: true },
+                        '2025-09-16': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { oportunidad: 1 },
+                            medioGenerador: { social_manager: 1 },
+                            origen: { asesor: 1 }
+                        },
+                        '2025-09-17': { sinDatos: true },
+                        '2025-09-18': { sinDatos: true },
+                        '2025-09-19': { sinDatos: true },
+                        '2025-09-20': { sinDatos: true },
+                        '2025-09-21': { sinDatos: true },
+                        '2025-09-22': { sinDatos: true },
+                        '2025-09-23': { sinDatos: true },
+                        '2025-09-24': { sinDatos: true },
+                        '2025-09-25': { sinDatos: true },
+                        '2025-09-26': { sinDatos: true },
+                        '2025-09-27': { sinDatos: true },
+                        '2025-09-28': { sinDatos: true },
+                        '2025-09-29': { sinDatos: true },
+                        '2025-09-30': { sinDatos: true }
                     }
                 },
                 // Datos individuales de Brandon
                 brandon: {
                     nombre: "Brandon",
-                    totalClientes: 2, // Total casos de Brandon
-                    clientesActivos: 1, // Luis Armando activo
-                    clientesPerdidos: 1, // Cristian perdido
-                    etapas: {
-                        prospecto: 0,
-                        oportunidad: 2, // Luis Armando y Cristian - ambos en OPORTUNIDAD
-                        negociacion: 0,
-                        comite: 0,
-                        leads: 0,
-                        desembolso: 0,
-                        desembolsado: 0
-                    },
-                    medioGenerador: {
-                        social_manager: 2, // Ambos casos son SOCIAL MANAGER
-                        whatsapp: 0,
-                        facebook: 0,
-                        sitio_web: 0,
-                        pbx: 0,
-                        referido: 0,
-                        visita_oficina: 0
-                    },
-                    origen: {
-                        asesor: 2, // Ambos gestionados por asesor
-                        ia: 0
-                    }
-                },
-                // Datos individuales de Jorge
-                jorge: {
-                    nombre: "Jorge",
-                    totalClientes: 4, // Total casos de Jorge
-                    clientesActivos: 3, // Jesús, German, Cesia activos
-                    clientesPerdidos: 1, // Honey perdido
-                    etapas: {
-                        prospecto: 0,
-                        oportunidad: 2, // Jesús y Honey en OPORTUNIDAD
-                        negociacion: 0,
-                        comite: 1, // German en COMITÉ
-                        leads: 1, // Cesia en LEADS
-                        desembolso: 0,
-                        desembolsado: 0
-                    },
-                    medioGenerador: {
-                        social_manager: 1, // Honey es SOCIAL MANAGER
-                        whatsapp: 3, // Jesús, German, Cesia son WHATSAPP
-                        facebook: 0,
-                        sitio_web: 0,
-                        pbx: 0,
-                        referido: 0,
-                        visita_oficina: 0
-                    },
-                    origen: {
-                        asesor: 1, // Honey gestionado por asesor
-                        ia: 3 // Jesús, German, Cesia gestionados por IA
-                    }
-                }
-            },
-            'peten': {
-                // Totales de la sede Petén (Elizabeth + Oswaldo)
-                totalSede: {
-                    totalClientes: 9,
-                    clientesActivos: 7,
-                    clientesPerdidos: 2
-                },
-                // Datos individuales de Elizabeth
-                elizabeth: {
-                    nombre: "Elizabeth",
-                    totalClientes: 2, // Total casos de Elizabeth
-                    clientesActivos: 2, // Ambos activos
-                    clientesPerdidos: 0, // Ninguno perdido
-                    etapas: {
-                        prospecto: 0,
-                        oportunidad: 1, // Martina en OPORTUNIDAD
-                        negociacion: 0,
-                        comite: 1, // Carlos en COMITÉ
-                        leads: 0,
-                        desembolso: 0,
-                        desembolsado: 0
-                    },
-                    medioGenerador: {
-                        social_manager: 2, // Ambos casos son SOCIAL MANAGER
-                        whatsapp: 0,
-                        facebook: 0,
-                        sitio_web: 0,
-                        pbx: 0,
-                        referido: 0,
-                        visita_oficina: 0
-                    },
-                    origen: {
-                        asesor: 2, // Ambos gestionados por asesor
-                        ia: 0
-                    }
-                },
-                // Datos individuales de Oswaldo
-                oswaldo: {
-                    nombre: "Oswaldo",
-                    totalClientes: 7, // Total casos de Oswaldo
-                    clientesActivos: 5, // Carlos, Dalila, Guisela, Gerson, Rony activos
-                    clientesPerdidos: 2, // Idda y Rudi perdidos
-                    etapas: {
-                        prospecto: 5, // Carlos, Dalila, Guisela, Gerson, Rony en PROSPECTO
-                        oportunidad: 2, // Idda y Rudi en OPORTUNIDAD
-                        negociacion: 0,
-                        comite: 0,
-                        leads: 0,
-                        desembolso: 0,
-                        desembolsado: 0
-                    },
-                    medioGenerador: {
-                        social_manager: 4, // Carlos, Dalila, Idda, Rudi son SOCIAL MANAGER
-                        whatsapp: 0,
-                        facebook: 0,
-                        sitio_web: 0,
-                        pbx: 0,
-                        referido: 3, // Guisela, Gerson, Rony son REFERIDO
-                        visita_oficina: 0
-                    },
-                    origen: {
-                        asesor: 7, // Todos gestionados por asesor
-                        ia: 0
-                    }
-                }
-            },
-            'mazatenango': {
-                // Totales de la sede Mazatenango (Marcos + Edwin + Leonel)
-                totalSede: {
-                    totalClientes: 21,
-                    clientesActivos: 21,
-                    clientesPerdidos: 0
-                },
-                // Datos individuales de Marcos
-                marcos: {
-                    nombre: "Marcos",
-                    totalClientes: 10, // Total casos de Marcos
-                    clientesActivos: 10, // Todos activos
-                    clientesPerdidos: 0, // Ninguno perdido
-                    etapas: {
-                        prospecto: 1, // Micaela en PROSPECTO
-                        oportunidad: 8, // Elida, Edvin, Marco, Jose, Fernando, Luis, Jerlyn, Wilson en OPORTUNIDAD
-                        negociacion: 0,
-                        comite: 0,
-                        leads: 1, // Cairo en LEADS
-                        desembolso: 0,
-                        desembolsado: 0
-                    },
-                    medioGenerador: {
-                        social_manager: 10, // Todos los casos son SOCIAL MANAGER
-                        whatsapp: 0,
-                        facebook: 0,
-                        sitio_web: 0,
-                        pbx: 0,
-                        referido: 0,
-                        visita_oficina: 0
-                    },
-                    origen: {
-                        asesor: 10, // Todos gestionados por asesor
-                        ia: 0
-                    }
-                },
-                // Datos individuales de Edwin
-                edwin: {
-                    nombre: "Edwin",
-                    totalClientes: 10, // Total casos de Edwin
-                    clientesActivos: 10, // Todos activos
-                    clientesPerdidos: 0, // Ninguno perdido
-                    etapas: {
-                        prospecto: 0,
-                        oportunidad: 10, // Todos en OPORTUNIDAD
-                        negociacion: 0,
-                        comite: 0,
-                        leads: 0,
-                        desembolso: 0,
-                        desembolsado: 0
-                    },
-                    medioGenerador: {
-                        social_manager: 8, // Manuela, Rolando, Jose, Mario, Claudia, Milena, Domingo, Cirilo son SOCIAL MANAGER
-                        whatsapp: 0,
-                        facebook: 0,
-                        sitio_web: 0,
-                        pbx: 0,
-                        referido: 1, // Gladys es REFERIDO
-                        visita_oficina: 1 // Irma es VISITA OFICINA
-                    },
-                    origen: {
-                        asesor: 10, // Todos gestionados por asesor
-                        ia: 0
-                    }
-                },
-                // Datos individuales de Leonel
-                leonel: {
-                    nombre: "Leonel",
-                    totalClientes: 1, // Total casos de Leonel
+                    totalClientes: 1, // Total casos de Brandon según tabla
                     clientesActivos: 1, // Activo
                     clientesPerdidos: 0, // Ninguno perdido
                     etapas: {
-                        prospecto: 1, // Yany en PROSPECTO
-                        oportunidad: 0,
+                        prospecto: 0,
+                        oportunidad: 1, // 03-sep
                         negociacion: 0,
                         comite: 0,
                         leads: 0,
@@ -1328,7 +2703,7 @@
                         desembolsado: 0
                     },
                     medioGenerador: {
-                        social_manager: 1, // Yany es SOCIAL MANAGER
+                        social_manager: 1, // 03-sep
                         whatsapp: 0,
                         facebook: 0,
                         sitio_web: 0,
@@ -1339,6 +2714,575 @@
                     origen: {
                         asesor: 1, // Gestionado por asesor
                         ia: 0
+                    },
+                    porFecha: {
+                        '2025-09-01': { sinDatos: true },
+                        '2025-09-02': { sinDatos: true },
+                        '2025-09-03': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { oportunidad: 1 },
+                            medioGenerador: { social_manager: 1 },
+                            origen: { asesor: 1 }
+                        },
+                        '2025-09-04': { sinDatos: true },
+                        '2025-09-05': { sinDatos: true },
+                        '2025-09-06': { sinDatos: true },
+                        '2025-09-07': { sinDatos: true },
+                        '2025-09-08': { sinDatos: true },
+                        '2025-09-09': { sinDatos: true },
+                        '2025-09-10': { sinDatos: true },
+                        '2025-09-11': { sinDatos: true },
+                        '2025-09-12': { sinDatos: true },
+                        '2025-09-13': { sinDatos: true },
+                        '2025-09-14': { sinDatos: true },
+                        '2025-09-15': { sinDatos: true },
+                        '2025-09-16': { sinDatos: true },
+                        '2025-09-17': { sinDatos: true },
+                        '2025-09-18': { sinDatos: true },
+                        '2025-09-19': { sinDatos: true },
+                        '2025-09-20': { sinDatos: true },
+                        '2025-09-21': { sinDatos: true },
+                        '2025-09-22': { sinDatos: true },
+                        '2025-09-23': { sinDatos: true },
+                        '2025-09-24': { sinDatos: true },
+                        '2025-09-25': { sinDatos: true },
+                        '2025-09-26': { sinDatos: true },
+                        '2025-09-27': { sinDatos: true },
+                        '2025-09-28': { sinDatos: true },
+                        '2025-09-29': { sinDatos: true },
+                        '2025-09-30': { sinDatos: true }
+                    }
+                },
+                // Datos individuales de Jorge
+                jorge: {
+                    nombre: "Jorge",
+                    totalClientes: 3, // Total casos de Jorge según tabla
+                    clientesActivos: 2, // 2 activos
+                    clientesPerdidos: 1, // 1 perdido (08-sep)
+                    etapas: {
+                        prospecto: 0,
+                        oportunidad: 1, // 08-sep (perdido)
+                        negociacion: 0,
+                        comite: 1, // 01-sep
+                        leads: 1, // 06-sep
+                        desembolso: 0,
+                        desembolsado: 0
+                    },
+                    medioGenerador: {
+                        social_manager: 1, // 08-sep
+                        whatsapp: 2, // 01-sep, 06-sep
+                        facebook: 0,
+                        sitio_web: 0,
+                        pbx: 0,
+                        referido: 0,
+                        visita_oficina: 0
+                    },
+                    origen: {
+                        asesor: 1, // 08-sep
+                        ia: 2 // 01-sep, 06-sep
+                    },
+                    porFecha: {
+                        '2025-09-01': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { comite: 1 },
+                            medioGenerador: { whatsapp: 1 },
+                            origen: { ia: 1 }
+                        },
+                        '2025-09-02': { sinDatos: true },
+                        '2025-09-03': { sinDatos: true },
+                        '2025-09-04': { sinDatos: true },
+                        '2025-09-05': { sinDatos: true },
+                        '2025-09-06': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { leads: 1 },
+                            medioGenerador: { whatsapp: 1 },
+                            origen: { ia: 1 }
+                        },
+                        '2025-09-07': { sinDatos: true },
+                        '2025-09-08': {
+                            totalClientes: 1,
+                            clientesActivos: 0,
+                            clientesPerdidos: 1,
+                            etapas: { oportunidad: 1 },
+                            medioGenerador: { social_manager: 1 },
+                            origen: { asesor: 1 }
+                        },
+                        '2025-09-09': { sinDatos: true },
+                        '2025-09-10': { sinDatos: true },
+                        '2025-09-11': { sinDatos: true },
+                        '2025-09-12': { sinDatos: true },
+                        '2025-09-13': { sinDatos: true },
+                        '2025-09-14': { sinDatos: true },
+                        '2025-09-15': { sinDatos: true },
+                        '2025-09-16': { sinDatos: true },
+                        '2025-09-17': { sinDatos: true },
+                        '2025-09-18': { sinDatos: true },
+                        '2025-09-19': { sinDatos: true },
+                        '2025-09-20': { sinDatos: true },
+                        '2025-09-21': { sinDatos: true },
+                        '2025-09-22': { sinDatos: true },
+                        '2025-09-23': { sinDatos: true },
+                        '2025-09-24': { sinDatos: true },
+                        '2025-09-25': { sinDatos: true },
+                        '2025-09-26': { sinDatos: true },
+                        '2025-09-27': { sinDatos: true },
+                        '2025-09-28': { sinDatos: true },
+                        '2025-09-29': { sinDatos: true },
+                        '2025-09-30': { sinDatos: true }
+                    }
+                }
+            },
+            'peten': {
+                // Totales de la sede Petén (Elizabeth + Oswaldo)
+                totalSede: {
+                    totalClientes: 9, // Total según tabla Excel
+                    clientesActivos: 7, // 7 activos
+                    clientesPerdidos: 2 // 2 perdidos (Oswaldo 18-sep desembolso, 04-sep comité)
+                },
+                // Datos individuales de Elizabeth
+                elizabeth: {
+                    nombre: "Elizabeth",
+                    totalClientes: 2, // Total casos de Elizabeth según tabla
+                    clientesActivos: 2, // Ambos activos
+                    clientesPerdidos: 0, // Ninguno perdido
+                    etapas: {
+                        prospecto: 0,
+                        oportunidad: 1, // 02-sep
+                        negociacion: 0,
+                        comite: 1, // 06-sep
+                        leads: 0,
+                        desembolso: 0,
+                        desembolsado: 0
+                    },
+                    medioGenerador: {
+                        social_manager: 2, // Ambos casos son SOCIAL MANAGER
+                        whatsapp: 0,
+                        facebook: 0,
+                        sitio_web: 0,
+                        pbx: 0,
+                        referido: 0,
+                        visita_oficina: 0
+                    },
+                    origen: {
+                        asesor: 2, // Ambos gestionados por asesor
+                        ia: 0
+                    },
+                    porFecha: {
+                        '2025-09-01': { sinDatos: true },
+                        '2025-09-02': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { oportunidad: 1 },
+                            medioGenerador: { social_manager: 1 },
+                            origen: { asesor: 1 }
+                        },
+                        '2025-09-03': { sinDatos: true },
+                        '2025-09-04': { sinDatos: true },
+                        '2025-09-05': { sinDatos: true },
+                        '2025-09-06': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { comite: 1 },
+                            medioGenerador: { social_manager: 1 },
+                            origen: { asesor: 1 }
+                        },
+                        '2025-09-07': { sinDatos: true },
+                        '2025-09-08': { sinDatos: true },
+                        '2025-09-09': { sinDatos: true },
+                        '2025-09-10': { sinDatos: true },
+                        '2025-09-11': { sinDatos: true },
+                        '2025-09-12': { sinDatos: true },
+                        '2025-09-13': { sinDatos: true },
+                        '2025-09-14': { sinDatos: true },
+                        '2025-09-15': { sinDatos: true },
+                        '2025-09-16': { sinDatos: true },
+                        '2025-09-17': { sinDatos: true },
+                        '2025-09-18': { sinDatos: true },
+                        '2025-09-19': { sinDatos: true },
+                        '2025-09-20': { sinDatos: true },
+                        '2025-09-21': { sinDatos: true },
+                        '2025-09-22': { sinDatos: true },
+                        '2025-09-23': { sinDatos: true },
+                        '2025-09-24': { sinDatos: true },
+                        '2025-09-25': { sinDatos: true },
+                        '2025-09-26': { sinDatos: true },
+                        '2025-09-27': { sinDatos: true },
+                        '2025-09-28': { sinDatos: true },
+                        '2025-09-29': { sinDatos: true },
+                        '2025-09-30': { sinDatos: true }
+                    }
+                },
+                // Datos individuales de Oswaldo
+                oswaldo: {
+                    nombre: "Oswaldo",
+                    totalClientes: 7, // Total casos de Oswaldo según tabla
+                    clientesActivos: 5, // 5 activos
+                    clientesPerdidos: 2, // 2 perdidos (18-sep desembolso, 04-sep comité)
+                    etapas: {
+                        prospecto: 5, // 18-sep (4 casos) + 15-sep (1 caso)
+                        oportunidad: 0,
+                        negociacion: 0,
+                        comite: 1, // 04-sep (perdido)
+                        leads: 0,
+                        desembolso: 1, // 18-sep (perdido)
+                        desembolsado: 0
+                    },
+                    medioGenerador: {
+                        social_manager: 3, // 18-sep desembolso, 04-sep comité, 18-sep prospecto (1 de los 4)
+                        whatsapp: 0,
+                        facebook: 0,
+                        sitio_web: 0,
+                        pbx: 0,
+                        referido: 4, // 18-sep (3 casos), 15-sep
+                        visita_oficina: 0
+                    },
+                    origen: {
+                        asesor: 7, // Todos gestionados por asesor
+                        ia: 0
+                    },
+                    porFecha: {
+                        '2025-09-01': { sinDatos: true },
+                        '2025-09-02': { sinDatos: true },
+                        '2025-09-03': { sinDatos: true },
+                        '2025-09-04': {
+                            totalClientes: 1,
+                            clientesActivos: 0,
+                            clientesPerdidos: 1,
+                            etapas: { comite: 1 },
+                            medioGenerador: { social_manager: 1 },
+                            origen: { asesor: 1 }
+                        },
+                        '2025-09-05': { sinDatos: true },
+                        '2025-09-06': { sinDatos: true },
+                        '2025-09-07': { sinDatos: true },
+                        '2025-09-08': { sinDatos: true },
+                        '2025-09-09': { sinDatos: true },
+                        '2025-09-10': { sinDatos: true },
+                        '2025-09-11': { sinDatos: true },
+                        '2025-09-12': { sinDatos: true },
+                        '2025-09-13': { sinDatos: true },
+                        '2025-09-14': { sinDatos: true },
+                        '2025-09-15': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { prospecto: 1 },
+                            medioGenerador: { referido: 1 },
+                            origen: { asesor: 1 }
+                        },
+                        '2025-09-16': { sinDatos: true },
+                        '2025-09-17': { sinDatos: true },
+                        '2025-09-18': {
+                            totalClientes: 5,
+                            clientesActivos: 4,
+                            clientesPerdidos: 1,
+                            etapas: { prospecto: 4, desembolso: 1 },
+                            medioGenerador: { social_manager: 2, referido: 3 },
+                            origen: { asesor: 5 }
+                        },
+                        '2025-09-19': { sinDatos: true },
+                        '2025-09-20': { sinDatos: true },
+                        '2025-09-21': { sinDatos: true },
+                        '2025-09-22': { sinDatos: true },
+                        '2025-09-23': { sinDatos: true },
+                        '2025-09-24': { sinDatos: true },
+                        '2025-09-25': { sinDatos: true },
+                        '2025-09-26': { sinDatos: true },
+                        '2025-09-27': { sinDatos: true },
+                        '2025-09-28': { sinDatos: true },
+                        '2025-09-29': { sinDatos: true },
+                        '2025-09-30': { sinDatos: true }
+                    }
+                }
+            },
+            'mazatenango': {
+                // Totales de la sede Mazatenango (Marcos + Edwin + Leonel)
+                totalSede: {
+                    totalClientes: 21, // Total casos según tabla Excel
+                    clientesActivos: 21, // Todos activos
+                    clientesPerdidos: 0 // Ninguno perdido
+                },
+                // Datos individuales de Marcos
+                marcos: {
+                    nombre: "Marcos",
+                    totalClientes: 7, // Total casos de Marcos según tabla
+                    clientesActivos: 7, // Todos activos
+                    clientesPerdidos: 0, // Ninguno perdido
+                    etapas: {
+                        prospecto: 1, // 18-sep
+                        oportunidad: 4, // 08-sep (2 casos), 16-sep, 17-sep
+                        negociacion: 0,
+                        comite: 0,
+                        leads: 1, // 01-sep
+                        desembolso: 0,
+                        desembolsado: 0
+                    },
+                    medioGenerador: {
+                        social_manager: 6, // La mayoría
+                        whatsapp: 0,
+                        facebook: 0,
+                        sitio_web: 0,
+                        pbx: 0,
+                        referido: 1, // 18-sep
+                        visita_oficina: 0
+                    },
+                    origen: {
+                        asesor: 7, // Todos gestionados por asesor
+                        ia: 0
+                    },
+                    porFecha: {
+                        '2025-09-01': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { leads: 1 },
+                            medioGenerador: { social_manager: 1 },
+                            origen: { asesor: 1 }
+                        },
+                        '2025-09-02': { sinDatos: true },
+                        '2025-09-03': { sinDatos: true },
+                        '2025-09-04': { sinDatos: true },
+                        '2025-09-05': { sinDatos: true },
+                        '2025-09-06': { sinDatos: true },
+                        '2025-09-07': { sinDatos: true },
+                        '2025-09-08': {
+                            totalClientes: 2,
+                            clientesActivos: 2,
+                            clientesPerdidos: 0,
+                            etapas: { oportunidad: 2 },
+                            medioGenerador: { social_manager: 2 },
+                            origen: { asesor: 2 }
+                        },
+                        '2025-09-09': { sinDatos: true },
+                        '2025-09-10': { sinDatos: true },
+                        '2025-09-11': { sinDatos: true },
+                        '2025-09-12': { sinDatos: true },
+                        '2025-09-13': { sinDatos: true },
+                        '2025-09-14': { sinDatos: true },
+                        '2025-09-15': { sinDatos: true },
+                        '2025-09-16': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { oportunidad: 1 },
+                            medioGenerador: { social_manager: 1 },
+                            origen: { asesor: 1 }
+                        },
+                        '2025-09-17': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { oportunidad: 1 },
+                            medioGenerador: { social_manager: 1 },
+                            origen: { asesor: 1 }
+                        },
+                        '2025-09-18': {
+                            totalClientes: 2,
+                            clientesActivos: 2,
+                            clientesPerdidos: 0,
+                            etapas: { oportunidad: 1, prospecto: 1 },
+                            medioGenerador: { social_manager: 1, referido: 1 },
+                            origen: { asesor: 2 }
+                        },
+                        '2025-09-19': { sinDatos: true },
+                        '2025-09-20': { sinDatos: true },
+                        '2025-09-21': { sinDatos: true },
+                        '2025-09-22': { sinDatos: true },
+                        '2025-09-23': { sinDatos: true },
+                        '2025-09-24': { sinDatos: true },
+                        '2025-09-25': { sinDatos: true },
+                        '2025-09-26': { sinDatos: true },
+                        '2025-09-27': { sinDatos: true },
+                        '2025-09-28': { sinDatos: true },
+                        '2025-09-29': { sinDatos: true },
+                        '2025-09-30': { sinDatos: true }
+                    }
+                },
+                // Datos individuales de Edwin
+                edwin: {
+                    nombre: "Edwin",
+                    totalClientes: 13, // Total casos de Edwin según tabla
+                    clientesActivos: 13, // Todos activos
+                    clientesPerdidos: 0, // Ninguno perdido
+                    etapas: {
+                        prospecto: 0,
+                        oportunidad: 7, // Todos los activos en OPORTUNIDAD
+                        negociacion: 0,
+                        comite: 0,
+                        leads: 0,
+                        desembolso: 0,
+                        desembolsado: 0,
+                        reconsideracion: 1 // 01-sep
+                    },
+                    medioGenerador: {
+                        social_manager: 7, // La mayoría
+                        whatsapp: 0,
+                        facebook: 0,
+                        sitio_web: 0,
+                        pbx: 0,
+                        referido: 0,
+                        visita_oficina: 1 // 13-sep
+                    },
+                    origen: {
+                        asesor: 8, // Todos gestionados por asesor
+                        ia: 0
+                    },
+                    porFecha: {
+                        '2025-09-01': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { reconsideracion: 1 },
+                            medioGenerador: { social_manager: 1 },
+                            origen: { asesor: 1 }
+                        },
+                        '2025-09-02': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { oportunidad: 1 },
+                            medioGenerador: { social_manager: 1 },
+                            origen: { asesor: 1 }
+                        },
+                        '2025-09-03': { sinDatos: true },
+                        '2025-09-04': { sinDatos: true },
+                        '2025-09-05': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { oportunidad: 1 },
+                            medioGenerador: { social_manager: 1 },
+                            origen: { asesor: 1 }
+                        },
+                        '2025-09-06': { sinDatos: true },
+                        '2025-09-07': { sinDatos: true },
+                        '2025-09-08': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { oportunidad: 1 },
+                            medioGenerador: { social_manager: 1 },
+                            origen: { asesor: 1 }
+                        },
+                        '2025-09-09': { sinDatos: true },
+                        '2025-09-10': { sinDatos: true },
+                        '2025-09-11': { sinDatos: true },
+                        '2025-09-12': { sinDatos: true },
+                        '2025-09-13': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { oportunidad: 1 },
+                            medioGenerador: { visita_oficina: 1 },
+                            origen: { asesor: 1 }
+                        },
+                        '2025-09-14': { sinDatos: true },
+                        '2025-09-15': {
+                            totalClientes: 2,
+                            clientesActivos: 2,
+                            clientesPerdidos: 0,
+                            etapas: { oportunidad: 2 },
+                            medioGenerador: { social_manager: 2 },
+                            origen: { asesor: 2 }
+                        },
+                        '2025-09-16': { sinDatos: true },
+                        '2025-09-17': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { oportunidad: 1 },
+                            medioGenerador: { social_manager: 1 },
+                            origen: { asesor: 1 }
+                        },
+                        '2025-09-18': { sinDatos: true },
+                        '2025-09-19': { sinDatos: true },
+                        '2025-09-20': { sinDatos: true },
+                        '2025-09-21': { sinDatos: true },
+                        '2025-09-22': { sinDatos: true },
+                        '2025-09-23': { sinDatos: true },
+                        '2025-09-24': { sinDatos: true },
+                        '2025-09-25': { sinDatos: true },
+                        '2025-09-26': { sinDatos: true },
+                        '2025-09-27': { sinDatos: true },
+                        '2025-09-28': { sinDatos: true },
+                        '2025-09-29': { sinDatos: true },
+                        '2025-09-30': { sinDatos: true }
+                    }
+                },
+                // Datos individuales de Leonel
+                leonel: {
+                    nombre: "Leonel",
+                    totalClientes: 1, // Total casos de Leonel según tabla
+                    clientesActivos: 1, // Activo
+                    clientesPerdidos: 0, // Ninguno perdido
+                    etapas: {
+                        prospecto: 1, // 08-sep
+                        oportunidad: 0,
+                        negociacion: 0,
+                        comite: 0,
+                        leads: 0,
+                        desembolso: 0,
+                        desembolsado: 0
+                    },
+                    medioGenerador: {
+                        social_manager: 1, // 08-sep es SOCIAL MANAGER
+                        whatsapp: 0,
+                        facebook: 0,
+                        sitio_web: 0,
+                        pbx: 0,
+                        referido: 0,
+                        visita_oficina: 0
+                    },
+                    origen: {
+                        asesor: 1, // Gestionado por asesor
+                        ia: 0
+                    },
+                    porFecha: {
+                        '2025-09-01': { sinDatos: true },
+                        '2025-09-02': { sinDatos: true },
+                        '2025-09-03': { sinDatos: true },
+                        '2025-09-04': { sinDatos: true },
+                        '2025-09-05': { sinDatos: true },
+                        '2025-09-06': { sinDatos: true },
+                        '2025-09-07': { sinDatos: true },
+                        '2025-09-08': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { prospecto: 1 },
+                            medioGenerador: { social_manager: 1 },
+                            origen: { asesor: 1 }
+                        },
+                        '2025-09-09': { sinDatos: true },
+                        '2025-09-10': { sinDatos: true },
+                        '2025-09-11': { sinDatos: true },
+                        '2025-09-12': { sinDatos: true },
+                        '2025-09-13': { sinDatos: true },
+                        '2025-09-14': { sinDatos: true },
+                        '2025-09-15': { sinDatos: true },
+                        '2025-09-16': { sinDatos: true },
+                        '2025-09-17': { sinDatos: true },
+                        '2025-09-18': { sinDatos: true },
+                        '2025-09-19': { sinDatos: true },
+                        '2025-09-20': { sinDatos: true },
+                        '2025-09-21': { sinDatos: true },
+                        '2025-09-22': { sinDatos: true },
+                        '2025-09-23': { sinDatos: true },
+                        '2025-09-24': { sinDatos: true },
+                        '2025-09-25': { sinDatos: true },
+                        '2025-09-26': { sinDatos: true },
+                        '2025-09-27': { sinDatos: true },
+                        '2025-09-28': { sinDatos: true },
+                        '2025-09-29': { sinDatos: true },
+                        '2025-09-30': { sinDatos: true }
                     }
                 }
             }
@@ -1357,7 +3301,8 @@
             event.target.closest('.asesor-item').classList.add('active');
             
             asesorSeleccionado = asesorId;
-            const asesor = asesoresData[asesorId];
+            const asesorOriginal = asesoresData[asesorId];
+            const asesor = obtenerDatosFiltrados(asesorOriginal);
             
             // Actualizar el título del panel
             document.querySelector('.asesores-title').textContent = 'Asesores - Agencia Central';
@@ -1368,9 +3313,26 @@
         function mostrarDetallesAsesor(asesor) {
             const contenido = document.getElementById('contenidoAsesor');
             
+            // Determinar el texto de fecha apropiado
+            let fechaTexto;
+            if (fechaSeleccionada === 'todas') {
+                fechaTexto = 'Datos Generales';
+            } else if (asesor.sinDatos) {
+                // Corregir el manejo de fechas para evitar problemas de zona horaria
+                const [año, mes, dia] = fechaSeleccionada.split('-');
+                const fecha = new Date(parseInt(año), parseInt(mes) - 1, parseInt(dia));
+                fechaTexto = 'Sin hipotecarios - ' + fecha.toLocaleDateString('es-GT', { day: 'numeric', month: 'long', year: 'numeric' });
+            } else {
+                // Corregir el manejo de fechas para evitar problemas de zona horaria
+                const [año, mes, dia] = fechaSeleccionada.split('-');
+                const fecha = new Date(parseInt(año), parseInt(mes) - 1, parseInt(dia));
+                fechaTexto = fecha.toLocaleDateString('es-GT', { day: 'numeric', month: 'long', year: 'numeric' });
+            }
+            
             contenido.innerHTML = `
                 <div class="asesor-header">
                     <h2>${asesor.nombre}</h2>
+                    <p style="color: ${asesor.sinDatos ? '#999' : '#666'}; font-size: 1rem; margin-top: 5px; font-weight: 500;">${fechaTexto}</p>
                     <div class="asesor-stats">
                         <div class="stat-card">
                             <div class="stat-number">${asesor.totalClientes}</div>
@@ -1623,13 +3585,27 @@
                 panelAsesores.innerHTML = `
                     <h3 class="asesores-title">Asesores - Agencia Central</h3>
                     ${Object.keys(asesoresData).map(asesorId => {
-                        const asesor = asesoresData[asesorId];
+                        const asesorOriginal = asesoresData[asesorId];
+                        const asesor = obtenerDatosFiltrados(asesorOriginal);
+                        
+                        let estadoTexto;
+                        if (fechaSeleccionada === 'todas') {
+                            estadoTexto = 'Total';
+                        } else if (asesor.sinDatos) {
+                            estadoTexto = 'Sin datos';
+                        } else {
+                            // Corregir el manejo de fechas para evitar problemas de zona horaria
+                            const [año, mes, dia] = fechaSeleccionada.split('-');
+                            const fechaObj = new Date(parseInt(año), parseInt(mes) - 1, parseInt(dia));
+                            estadoTexto = fechaObj.toLocaleDateString('es-GT', { day: 'numeric', month: 'short' });
+                        }
+                        
                         return `
                             <div class="asesor-item" onclick="seleccionarAsesor('${asesorId}')">
                                 <div class="asesor-nombre">${asesor.nombre}</div>
                                 <div class="asesor-stats">
-                                    <span>📊 ${asesor.totalClientes} casos</span>
-                                    <span>✅ ${asesor.clientesActivos} activos</span>
+                                    <span style="color: ${asesor.sinDatos ? '#999' : '#333'}">📊 ${asesor.totalClientes} casos ${estadoTexto !== 'Total' ? '(' + estadoTexto + ')' : ''}</span>
+                                    <span style="color: ${asesor.sinDatos ? '#999' : '#333'}">✅ ${asesor.clientesActivos} activos</span>
                                 </div>
                             </div>
                         `;
@@ -1649,21 +3625,43 @@
                     <h3 class="asesores-title">Asesores - ${sedeNombre}</h3>
                     ${asesores.map(asesorNombre => {
                         const asesorKey = asesorNombre.toLowerCase().replace(' ', '');
-                        const asesorData = coopexpressData[sedeId] && coopexpressData[sedeId][asesorKey];
-                        const tieneDatos = asesorData && asesorData.totalClientes > 0;
+                        const asesorDataOriginal = coopexpressData[sedeId] && coopexpressData[sedeId][asesorKey];
+                        const tieneDatos = asesorDataOriginal && asesorDataOriginal.totalClientes > 0;
                         
-                        return `
-                            <div class="asesor-item ${tieneDatos ? 'clickeable' : ''}" ${tieneDatos ? `onclick="seleccionarAsesorCoopexpress('${sedeId}', '${asesorKey}')"` : ''}>
-                                <div class="asesor-nombre">${asesorNombre}</div>
-                                <div class="asesor-stats">
-                                    ${tieneDatos ? 
-                                        `<span>📊 ${asesorData.totalClientes} casos totales</span>
-                                         <span>✅ ${asesorData.clientesActivos} activos</span>` : 
-                                        `<span style="color: #999;">📋 Datos pendientes</span>`
-                                    }
+                        if (tieneDatos) {
+                            const asesorData = obtenerDatosFiltrados(asesorDataOriginal);
+                            
+                            let estadoTexto;
+                            if (fechaSeleccionada === 'todas') {
+                                estadoTexto = 'Total';
+                            } else if (asesorData.sinDatos) {
+                                estadoTexto = 'Sin datos';
+                            } else {
+                                // Corregir el manejo de fechas para evitar problemas de zona horaria
+                                const [año, mes, dia] = fechaSeleccionada.split('-');
+                                const fechaObj = new Date(parseInt(año), parseInt(mes) - 1, parseInt(dia));
+                                estadoTexto = fechaObj.toLocaleDateString('es-GT', { day: 'numeric', month: 'short' });
+                            }
+                            
+                            return `
+                                <div class="asesor-item clickeable" onclick="seleccionarAsesorCoopexpress('${sedeId}', '${asesorKey}')">
+                                    <div class="asesor-nombre">${asesorNombre}</div>
+                                    <div class="asesor-stats">
+                                        <span style="color: ${asesorData.sinDatos ? '#999' : '#333'}">📊 ${asesorData.totalClientes} casos ${estadoTexto !== 'Total' ? '(' + estadoTexto + ')' : ''}</span>
+                                        <span style="color: ${asesorData.sinDatos ? '#999' : '#333'}">✅ ${asesorData.clientesActivos} activos</span>
+                                    </div>
                                 </div>
-                            </div>
-                        `;
+                            `;
+                        } else {
+                            return `
+                                <div class="asesor-item">
+                                    <div class="asesor-nombre">${asesorNombre}</div>
+                                    <div class="asesor-stats">
+                                        <span style="color: #999;">📋 Datos pendientes</span>
+                                    </div>
+                                </div>
+                            `;
+                        }
                     }).join('')}
                 `;
             }
@@ -1748,7 +3746,12 @@
             document.querySelectorAll('.sede-item').forEach(item => {
                 item.classList.remove('active');
             });
-            event.target.classList.add('active');
+            
+            // Buscar y activar el elemento de la sede correspondiente
+            const sedeElement = document.querySelector(`[onclick="seleccionarSede('${sedeId}')"]`);
+            if (sedeElement) {
+                sedeElement.classList.add('active');
+            }
             
             // Mantener ocultas las estadísticas de Agencia Central
             document.getElementById('stats-agencia-central').style.display = 'none';
@@ -1767,7 +3770,7 @@
                 '4caminos': { 
                     nombre: '4 Caminos', 
                     asesores: ['Andony', 'Brandon', 'Jorge'],
-                    totales: { totalClientes: 10, clientesActivos: 8, clientesPerdidos: 2 }
+                    totales: { totalClientes: 9, clientesActivos: 8, clientesPerdidos: 1 }
                 },
                 peten: { 
                     nombre: 'Petén', 
@@ -1822,7 +3825,8 @@
         }
 
         function seleccionarAsesorCoopexpress(sedeId, asesorId) {
-            const asesor = coopexpressData[sedeId][asesorId];
+            const asesorOriginal = coopexpressData[sedeId][asesorId];
+            const asesor = obtenerDatosFiltrados(asesorOriginal);
             
             // Limpiar gráficos existentes
             Object.values(chartsInstances).forEach(chart => {
@@ -1849,7 +3853,11 @@
                     asesores: ['Andony'],
                     totales: { totalClientes: 4, clientesActivos: 4, clientesPerdidos: 0 }
                 },
-                peten: { nombre: 'Petén', asesores: ['Sofia Valdez', 'Roberto Kim'] },
+                peten: { 
+                    nombre: 'Petén', 
+                    asesores: ['Elizabeth', 'Oswaldo'],
+                    totales: { totalClientes: 9, clientesActivos: 7, clientesPerdidos: 2 }
+                },
                 mazatenango: { nombre: 'Mazatenango', asesores: ['Andrea Mejía', 'Carlos Hernández'] }
             };
 
@@ -1879,6 +3887,10 @@
         window.addEventListener('DOMContentLoaded', function() {
             // Mostrar Agencia Central por defecto
             mostrarAgenciaCentral();
+            
+            // Configurar estado inicial del filtro
+            document.getElementById('agencia-central-link').classList.add('active');
+            document.getElementById('coopexpress-link').classList.remove('active');
         });
     </script>
 </body>
