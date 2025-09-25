@@ -804,6 +804,31 @@
         
         // Función para aplicar filtro por rango de fechas
         function aplicarFiltroRango() {
+            // Calcular totales filtrados por rango para Agencia Central
+            let totalClientes = 0, clientesActivos = 0, clientesPerdidos = 0, totalAsesores = 0;
+            Object.values(asesoresData).forEach(asesor => {
+                if (asesor && asesor.porFecha) {
+                    Object.entries(asesor.porFecha).forEach(([fecha, datos]) => {
+                        if (fecha >= fechaInicio && fecha <= fechaFin && !datos.sinDatos) {
+                            totalClientes += datos.totalClientes || 0;
+                            clientesActivos += datos.clientesActivos || 0;
+                            clientesPerdidos += datos.clientesPerdidos || 0;
+                        }
+                    });
+                    totalAsesores++;
+                }
+            });
+            // Actualizar estadísticas generales en el DOM
+            const stats = document.querySelectorAll('#stats-agencia-central .stat-card-general');
+            if (stats.length >= 4) {
+                stats[0].querySelector('div').textContent = totalClientes;
+                stats[1].querySelector('div').textContent = clientesActivos;
+                stats[2].querySelector('div').textContent = clientesPerdidos;
+                stats[3].querySelector('div').textContent = totalAsesores;
+                // Actualizar porcentajes
+                stats[1].querySelectorAll('div')[2].textContent = totalClientes > 0 ? ((clientesActivos / totalClientes) * 100).toFixed(1) + '%' : '0%';
+                stats[2].querySelectorAll('div')[2].textContent = totalClientes > 0 ? ((clientesPerdidos / totalClientes) * 100).toFixed(1) + '%' : '0%';
+            }
             fechaInicio = document.getElementById('fecha-inicio').value;
             fechaFin = document.getElementById('fecha-fin').value;
             
@@ -3460,7 +3485,7 @@
                 tituloAsesores.textContent = `Asesores - ${sedeNombre}`;
                 panelAsesores.innerHTML = `
                     <h3 class="asesores-title">Asesores - ${sedeNombre}</h3>
-                    ${asesores.map(asesorNombre => {
+                    ${asesores.filter(a => a.toLowerCase() !== 'totalsede').map(asesorNombre => {
                         const asesorKey = asesorNombre.toLowerCase().replace(' ', '');
                         const asesorDataOriginal = coopexpressData[sedeId] && coopexpressData[sedeId][asesorKey];
                         const tieneDatos = asesorDataOriginal && asesorDataOriginal.totalClientes > 0;
@@ -3652,66 +3677,54 @@
             // Mantener ocultas las estadísticas de Agencia Central
             document.getElementById('stats-agencia-central').style.display = 'none';
             
-            const sedes = {
-                escuintla: { 
-                    nombre: 'Escuintla', 
-                    asesores: ['Anahi', 'Monica'],
-                    totales: { totalClientes: 46, clientesActivos: 32, clientesPerdidos: 14 }
-                },
-                coban: { 
-                    nombre: 'Cobán', 
-                    asesores: ['Jennifer', 'Lidia', 'Mildred'],
-                    totales: { totalClientes: 72, clientesActivos: 61, clientesPerdidos: 11 }
-                },
-                '4caminos': { 
-                    nombre: '4 Caminos', 
-                    asesores: ['Andony', 'Brandon', 'Jorge'],
-                    totales: { totalClientes: 15, clientesActivos: 13, clientesPerdidos: 2 }
-                },
-                peten: { 
-                    nombre: 'Petén', 
-                    asesores: ['Elizabeth', 'Oswaldo'],
-                    totales: { totalClientes: 10, clientesActivos: 8, clientesPerdidos: 2 }
-                },
-                mazatenango: { 
-                    nombre: 'Mazatenango', 
-                    asesores: ['Marcos', 'Edwin', 'Leonel'],
-                    totales: { totalClientes: 23, clientesActivos: 22, clientesPerdidos: 1 }
-                }
-            };
-
-            const sede = sedes[sedeId];
-            
+            // Obtener datos dinámicos filtrados por rango para la sede seleccionada
+            const dataSede = coopexpressData[sedeId];
+            let totalClientes = 0, clientesActivos = 0, clientesPerdidos = 0;
+            let asesores = [];
+            if (dataSede) {
+                asesores = Object.keys(dataSede);
+                asesores.forEach(asesorKey => {
+                    const asesor = dataSede[asesorKey];
+                    if (asesor && asesor.porFecha) {
+                        Object.entries(asesor.porFecha).forEach(([fecha, datos]) => {
+                            if (fecha >= fechaInicio && fecha <= fechaFin && !datos.sinDatos) {
+                                totalClientes += datos.totalClientes || 0;
+                                clientesActivos += datos.clientesActivos || 0;
+                                clientesPerdidos += datos.clientesPerdidos || 0;
+                            }
+                        });
+                    }
+                });
+            }
             // Actualizar panel de asesores para mostrar solo los de esta sede
-            actualizarPanelAsesores('sede', sedeId, sede.nombre, sede.asesores);
-            
+            actualizarPanelAsesores('sede', sedeId, sedeId.charAt(0).toUpperCase() + sedeId.slice(1), asesores);
             // Mostrar información de la sede en el panel derecho
             const contenido = document.getElementById('contenidoAsesor');
             contenido.innerHTML = `
                 <div class="asesor-header">
-                    <h2>Sede ${sede.nombre}</h2>
+                    <h2>Sede ${sedeId.charAt(0).toUpperCase() + sedeId.slice(1)}</h2>
                     <div class="estadisticas-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 20px 0;">
                         <div class="stat-card" style="background: linear-gradient(135deg, #ff7f00, #ff9500); color: white; padding: 15px; border-radius: 8px; text-align: center;">
-                            <div style="font-size: 1.5rem; font-weight: bold;">${sede.totales.totalClientes}</div>
+                            <div style="font-size: 1.5rem; font-weight: bold;">${totalClientes}</div>
                             <div style="opacity: 0.9; font-size: 0.9rem;">Total Asignados</div>
                         </div>
                         <div class="stat-card" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; padding: 15px; border-radius: 8px; text-align: center;">
-                            <div style="font-size: 1.5rem; font-weight: bold;">${sede.totales.clientesActivos}</div>
+                            <div style="font-size: 1.5rem; font-weight: bold;">${clientesActivos}</div>
                             <div style="opacity: 0.9; font-size: 0.9rem;">Activos</div>
                         </div>
                         <div class="stat-card" style="background: linear-gradient(135deg, #dc3545, #fd7e14); color: white; padding: 15px; border-radius: 8px; text-align: center;">
-                            <div style="font-size: 1.5rem; font-weight: bold;">${sede.totales.clientesPerdidos}</div>
+                            <div style="font-size: 1.5rem; font-weight: bold;">${clientesPerdidos}</div>
                             <div style="opacity: 0.9; font-size: 0.9rem;">Perdidos</div>
                         </div>
                     </div>
                     <div style="margin-top: 30px; padding: 25px; background: #fff8f0; border-radius: 15px; border: 1px solid rgba(255, 127, 0, 0.2);">
                         <p style="color: #ff7f00; font-weight: 600; font-size: 1.1rem; margin-bottom: 10px;">👥 Selecciona un asesor</p>
                         <p style="color: #666; margin-top: 5px; line-height: 1.5;">Haz clic en cualquier asesor del panel izquierdo para ver sus datos detallados.</p>
-                        ${sede.asesores.length > 0 ? `
+                        ${asesores.length > 0 ? `
                             <div style="margin-top: 15px;">
                                 <strong style="color: #ff7f00;">Asesores disponibles:</strong>
                                 <div style="margin-top: 8px;">
-                                    ${sede.asesores.map(asesor => `<span style="background: white; padding: 4px 8px; margin: 2px; border-radius: 4px; border: 1px solid rgba(255,127,0,0.3); display: inline-block; font-size: 0.9rem;">${asesor}</span>`).join('')}
+                                    ${asesores.map(asesor => `<span style="background: white; padding: 4px 8px; margin: 2px; border-radius: 4px; border: 1px solid rgba(255,127,0,0.3); display: inline-block; font-size: 0.9rem;">${asesor}</span>`).join('')}
                                 </div>
                             </div>
                         ` : ''}
