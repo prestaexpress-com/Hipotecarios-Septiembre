@@ -1039,8 +1039,8 @@
         const asesoresData = {
             miguel: {
                 nombre: "Miguel",
-                totalClientes: 31,
-                clientesActivos: 30,
+                totalClientes: 35,
+                clientesActivos: 34,
                 clientesPerdidos: 1,
                 etapas: {
                     prospecto: 10,
@@ -1063,6 +1063,19 @@
                 },
                 // Datos reales por fecha basados en tu tabla
                 porFecha: {
+                        '2025-09-25': {
+                            totalClientes: 3,
+                            clientesActivos: 3,
+                            clientesPerdidos: 0,
+                            etapas: { oportunidad: 1, leads: 2 },
+                            medioGenerador: { sitio_web: 1, social_manager: 1, facebook: 1 },
+                            origen: { asesor: 2, ia: 1 },
+                            detalle: [
+                                { etapa: 'OPORTUNIDAD', estado: 'ACTIVO', medio: 'SITIO WEB', origen: 'ASESOR' },
+                                { etapa: 'LEADS', estado: 'ACTIVO', medio: 'SOCIAL MANAGER', origen: 'ASESOR' },
+                                { etapa: 'LEADS', estado: 'ACTIVO', medio: 'FACEBOOK', origen: 'IA' }
+                            ]
+                        },
                     '2025-09-01': {
                         totalClientes: 3,
                         clientesActivos: 3,
@@ -1187,9 +1200,9 @@
             },
             emely: {
                 nombre: "Emely",
-                totalClientes: 21,
+                totalClientes: 24,
                 clientesActivos: 18,
-                clientesPerdidos: 3,
+                clientesPerdidos: 6,
                 etapas: {
                     prospecto: 0,
                     oportunidad: 4,
@@ -1215,6 +1228,14 @@
                 },
                 // Datos reales por fecha basados en tu tabla
                 porFecha: {
+                        '2025-09-25': {
+                            totalClientes: 1,
+                            clientesActivos: 0,
+                            clientesPerdidos: 1,
+                            etapas: { leads: 1 },
+                            medioGenerador: { social_manager: 1 },
+                            origen: { ia: 1, asesor: 0 }
+                        },
                     '2025-09-01': {
                         totalClientes: 3,
                         clientesActivos: 3,
@@ -1299,9 +1320,9 @@
             },
             gabriel: {
                 nombre: "Gabriel",
-                totalClientes: 20,
+                totalClientes: 22,
                 clientesActivos: 20,
-                clientesPerdidos: 0,
+                clientesPerdidos: 2,
                 etapas: {
                     prospecto: 0,
                     oportunidad: 2,
@@ -1322,11 +1343,19 @@
                     visita_oficina: 0
                 },
                 origen: {
-                    asesor: 3,
-                    ia: 17
-                },
+                        asesor: 6,
+                        ia: 0
+                    },
                 // Datos reales por fecha basados en tu tabla
                 porFecha: {
+                        '2025-09-25': {
+                            totalClientes: 1,
+                            clientesActivos: 0,
+                            clientesPerdidos: 1,
+                            etapas: { leads: 1 },
+                            medioGenerador: { facebook: 1 },
+                            origen: { ia: 1, asesor: 0 }
+                        },
                     '2025-09-01': {
                         totalClientes: 1,
                         clientesActivos: 1,
@@ -1451,8 +1480,8 @@
             },
             brayan: {
                 nombre: "Brayan",
-                totalClientes: 30,
-                clientesActivos: 28,
+                totalClientes: 33,
+                clientesActivos: 31,
                 clientesPerdidos: 2,
                 etapas: {
                     prospecto: 5,
@@ -1478,6 +1507,17 @@
                 },
                 // Datos reales por fecha basados en tu tabla
                 porFecha: {
+                        '2025-09-25': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { prospecto: 1 },
+                            medioGenerador: { social_manager: 1 },
+                            origen: { asesor: 1, ia: 0 },
+                            detalle: [
+                                { etapa: 'PROSPECTO', estado: 'ACTIVO', medio: 'SOCIAL MANAGER', origen: 'ASESOR' }
+                            ]
+                        },
                     '2025-09-02': {
                         totalClientes: 2,
                         clientesActivos: 2,
@@ -1722,8 +1762,8 @@
             },
             jorge: {
                 nombre: "Jorge",
-                totalClientes: 18,
-                clientesActivos: 18,
+                totalClientes: 20,
+                clientesActivos: 20,
                 clientesPerdidos: 0,
                 etapas: {
                     prospecto: 4,
@@ -1750,6 +1790,17 @@
                 },
                 // Datos reales por fecha basados en tu tabla
                 porFecha: {
+                        '2025-09-25': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { prospecto: 1 },
+                            medioGenerador: { social_manager: 1 },
+                            origen: { asesor: 1, ia: 0 },
+                            detalle: [
+                                { etapa: 'PROSPECTO', estado: 'ACTIVO', medio: 'SOCIAL MANAGER', origen: 'ASESOR' }
+                            ]
+                        },
                     '2025-09-02': {
                         totalClientes: 1,
                         clientesActivos: 1,
@@ -1826,9 +1877,9 @@
             },
             carlos: {
                 nombre: "Carlos",
-                totalClientes: 30,
-                clientesActivos: 29,
-                clientesPerdidos: 1,
+                totalClientes: 26,
+                clientesActivos: 23,
+                clientesPerdidos: 3,
                 etapas: {
                     prospecto: 0,
                     oportunidad: 7,
@@ -1853,66 +1904,47 @@
                 },
                 // Datos reales por fecha basados en tu tabla
                 porFecha: {
-                    '2025-09-01': {
-                        totalClientes: 3,
-                        clientesActivos: 3,
-                        clientesPerdidos: 0,
-                        etapas: { negociacion: 1, oportunidad: 2 },
-                        medioGenerador: { social_manager: 2, whatsapp: 1 },
-                        origen: { asesor: 3, ia: 0 }
-                    },
-                    '2025-09-02': {
-                        totalClientes: 1,
-                        clientesActivos: 1,
-                        clientesPerdidos: 0,
-                        etapas: { comite: 1 },
-                        medioGenerador: { whatsapp: 1 },
-                        origen: { ia: 1, asesor: 0 }
-                    },
-                    '2025-09-03': {
-                        totalClientes: 2,
-                        clientesActivos: 2,
-                        clientesPerdidos: 0,
-                        etapas: { leads: 2 },
-                        medioGenerador: { social_manager: 1, whatsapp: 1 },
-                        origen: { asesor: 1, ia: 1 }
-                    },
-                    '2025-09-05': {
-                        totalClientes: 1,
-                        clientesActivos: 1,
-                        clientesPerdidos: 0,
-                        etapas: { oportunidad: 1 },
-                        medioGenerador: { social_manager: 1 },
-                        origen: { asesor: 1, ia: 0 }
-                    },
+                        '2025-09-25': {
+                            totalClientes: 3,
+                            clientesActivos: 0,
+                            clientesPerdidos: 3,
+                            etapas: { leads: 3 },
+                            medioGenerador: { social_manager: 2, facebook: 1 },
+                            origen: { asesor: 0, ia: 3 },
+                            detalle: [
+                                { etapa: 'LEADS', estado: 'PERDIDO', medio: 'SOCIAL MANAGER', origen: 'IA' },
+                                { etapa: 'LEADS', estado: 'PERDIDO', medio: 'SOCIAL MANAGER', origen: 'IA' },
+                                { etapa: 'LEADS', estado: 'PERDIDO', medio: 'FACEBOOK', origen: 'IA' }
+                            ]
+                        },
                     '2025-09-08': {
-                        totalClientes: 3,
-                        clientesActivos: 3,
-                        clientesPerdidos: 0,
+                        totalClientes: 36,
+                        clientesActivos: 35,
+                        clientesPerdidos: 1,
                         etapas: { oportunidad: 1, comite: 1, leads: 1 },
                         medioGenerador: { pbx: 1, social_manager: 2 },
                         origen: { asesor: 3, ia: 0 }
                     },
                     '2025-09-09': {
-                        totalClientes: 2,
-                        clientesActivos: 2,
-                        clientesPerdidos: 0,
+                        totalClientes: 23,
+                        clientesActivos: 18,
+                        clientesPerdidos: 5,
                         etapas: { oportunidad: 1, leads: 1 },
                         medioGenerador: { social_manager: 1, facebook: 1 },
                         origen: { asesor: 1, ia: 1 }
                     },
                     '2025-09-16': {
-                        totalClientes: 2,
-                        clientesActivos: 2,
-                        clientesPerdidos: 0,
+                        totalClientes: 22,
+                        clientesActivos: 19,
+                        clientesPerdidos: 3,
                         etapas: { leads: 2 },
                         medioGenerador: { social_manager: 1, whatsapp: 1 },
                         origen: { asesor: 1, ia: 1 }
                     },
                     '2025-09-18': {
-                        totalClientes: 2,
-                        clientesActivos: 2,
-                        clientesPerdidos: 0,
+                        totalClientes: 34,
+                        clientesActivos: 32,
+                        clientesPerdidos: 2,
                         etapas: { leads: 2 },
                         medioGenerador: { whatsapp: 1, referido: 1 },
                         origen: { asesor: 1, ia: 1 }
@@ -1926,16 +1958,16 @@
                         origen: { asesor: 1, ia: 3 }
                     },
                     '2025-09-20': {
-                        totalClientes: 1,
-                        clientesActivos: 1,
+                        totalClientes: 13,
+                        clientesActivos: 13,
                         clientesPerdidos: 0,
                         etapas: { leads: 1 },
                         medioGenerador: { referido: 1 },
                         origen: { asesor: 1, ia: 0 }
                     },
                     '2025-09-21': {
-                        totalClientes: 1,
-                        clientesActivos: 1,
+                        totalClientes: 20,
+                        clientesActivos: 20,
                         clientesPerdidos: 0,
                         etapas: { leads: 1 },
                         medioGenerador: { whatsapp: 1 },
@@ -1958,9 +1990,9 @@
                         origen: { asesor: 1, ia: 3 }
                     },
                     '2025-09-24': {
-                        totalClientes: 1,
-                        clientesActivos: 1,
-                        clientesPerdidos: 0,
+                        totalClientes: 34,
+                        clientesActivos: 31,
+                        clientesPerdidos: 3,
                         etapas: { leads: 1 },
                         medioGenerador: { social_manager: 1 },
                         origen: { asesor: 1, ia: 0 }
@@ -2005,6 +2037,8 @@
                         medioGenerador: { social_manager: 1 },
                         origen: { asesor: 1, ia: 0 }
                     }
+                        ,
+                        // ...existing code...
                 }
             }
         };
@@ -2014,9 +2048,9 @@
             escuintla: {
                 // Totales de la sede completa (Anahi + Mónica)
                 totalSede: {
-                    totalClientes: 46, // Total casos de la sede + 1 nuevo de Mónica
-                    clientesActivos: 32, // Casos activos + 1 nuevo activo
-                    clientesPerdidos: 14 // Sin cambio
+                    totalClientes: 48,
+                    clientesActivos: 34,
+                    clientesPerdidos: 14
                 },
                 // Datos individuales de Anahi (parte de los totales de Escuintla)
                 anahi: {
@@ -2161,6 +2195,15 @@
                             medioGenerador: { social_manager: 2, visita_oficina: 1 },
                             origen: { asesor: 3, ia: 0 }
                         }
+                            ,
+                            '2025-09-25': {
+                                totalClientes: 1,
+                                clientesActivos: 1,
+                                clientesPerdidos: 0,
+                                etapas: { oportunidad: 1 },
+                                medioGenerador: { social_manager: 1 },
+                                origen: { asesor: 1, ia: 0 }
+                            }
                     }
                 },
                 // Datos individuales de Monica
@@ -2232,6 +2275,15 @@
                             medioGenerador: { social_manager: 1 },
                             origen: { asesor: 1, ia: 0 }
                         }
+                            ,
+                            '2025-09-25': {
+                                totalClientes: 3,
+                                clientesActivos: 2,
+                                clientesPerdidos: 1,
+                                etapas: { leads: 2 },
+                                medioGenerador: { social_manager: 3 },
+                                origen: { asesor: 3, ia: 0 }
+                            }
                     }
                 }
             },
@@ -2356,15 +2408,17 @@
                         '2025-09-22': { totalClientes: 6, clientesActivos: 6, clientesPerdidos: 0, etapas: { oportunidad: 3, prospecto: 2, leads: 1 }, medioGenerador: { social_manager: 5, visita_oficina: 2 }, origen: { asesor: 6 } },
                         '2025-09-23': { totalClientes: 1, clientesActivos: 1, clientesPerdidos: 0, etapas: { prospecto: 1 }, medioGenerador: { social_manager: 1 }, origen: { asesor: 1 } },
                         '2025-09-24': { totalClientes: 4, clientesActivos: 4, clientesPerdidos: 0, etapas: { oportunidad: 1, prospecto: 3 }, medioGenerador: { social_manager: 4 }, origen: { asesor: 4 } }
+                            ,
+                            '2025-09-25': { totalClientes: 1, clientesActivos: 1, clientesPerdidos: 0, etapas: { prospecto: 1 }, medioGenerador: { social_manager: 1 }, origen: { asesor: 1 } }
                     }
                 }
             },
             '4caminos': {
                 // Totales de la sede 4 Caminos según datos Excel
                 totalSede: {
-                    totalClientes: 15, // 14 + 1 nuevo del 24-sep de Andony
-                    clientesActivos: 13, // 12 + 1 nuevo activo de Andony
-                    clientesPerdidos: 2 // Sin cambio
+                    totalClientes: 17,
+                    clientesActivos: 15,
+                    clientesPerdidos: 2
                 },
                 // Datos individuales de Andony
                 andony: {
@@ -2486,8 +2540,8 @@
                 // Datos individuales de Brandon
                 brandon: {
                     nombre: "Brandon",
-                    totalClientes: 2, // Total casos según Excel
-                    clientesActivos: 1, // 1 activo
+                    totalClientes: 3, // 2 anteriores + 1 nuevo del 25-sep
+                    clientesActivos: 2, // 1 anterior + 1 nuevo activo del 25-sep
                     clientesPerdidos: 1, // 1 perdido
                     etapas: {
                         prospecto: 0,
@@ -2530,20 +2584,14 @@
                         '2025-09-09': { sinDatos: true },
                         '2025-09-10': { sinDatos: true },
                         '2025-09-11': { sinDatos: true },
-                        '2025-09-12': { sinDatos: true },
-                        '2025-09-13': { sinDatos: true },
-                        '2025-09-14': { sinDatos: true },
-                        '2025-09-15': { sinDatos: true },
-                        '2025-09-16': { sinDatos: true },
-                        '2025-09-17': { sinDatos: true },
-                        '2025-09-18': { sinDatos: true },
-                        '2025-09-19': { sinDatos: true },
-                        '2025-09-20': { sinDatos: true },
-                        '2025-09-21': { sinDatos: true },
-                        '2025-09-22': { sinDatos: true },
-                        '2025-09-23': { sinDatos: true },
-                        '2025-09-24': { sinDatos: true },
-                        '2025-09-25': { sinDatos: true },
+                        '2025-09-25': {
+                            totalClientes: 1,
+                            clientesActivos: 1,
+                            clientesPerdidos: 0,
+                            etapas: { oportunidad: 1 },
+                            medioGenerador: { social_manager: 1 },
+                            origen: { asesor: 1, ia: 0 }
+                        },
                         '2025-09-26': { sinDatos: true },
                         '2025-09-27': { sinDatos: true },
                         '2025-09-28': { sinDatos: true },
@@ -2608,6 +2656,7 @@
                             etapas: { oportunidad: 1 },
                             medioGenerador: { social_manager: 1 },
                             origen: { asesor: 1 }
+                            
                         },
                         '2025-09-09': { sinDatos: true },
                         '2025-09-10': { sinDatos: true },
